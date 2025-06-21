@@ -29,7 +29,7 @@ export default function RainbowBorder({
   return (
     <div
       className={[
-        "p-[2px] rounded-lg overflow-hidden rainbow-border-animate shadow-md",
+        "p-[2px] rounded-lg overflow-hidden rainbow-border-animate shadow-md shrink-0",
         className,
       ].join(" ")}
     >
