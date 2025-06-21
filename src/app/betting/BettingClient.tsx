@@ -206,8 +206,10 @@ export default function BettingClient({ initialCombos }: Props) {
                 combos={combinations}
                 selectedId={selectedId}
                 onSelect={(id) => {
-                    setSelectedId(id);
-                    setResultsReset();
+                    if (id !== selectedId) {
+                        setSelectedId(id);
+                        setResultsReset();
+                    }
                 }}
                 searchText={searchText}
                 setSearchText={setSearchText}
@@ -312,7 +314,7 @@ export default function BettingClient({ initialCombos }: Props) {
                         <b>推奨掛け金</b> … <u>1/4 ケリー</u> (Quarter Kelly) による推奨額です。<br />
                         まず <InlineMath math={"f_{\\text{kelly}} = \\frac{p \\times b - (1 - p)}{b}"} /> (Full Kelly) を求め、<br />
                         <InlineMath math={"f = 0.25 \\times f_{\\text{kelly}}"} /> として所持金に掛けます。<br />
-                        最終的な掛け金 = <InlineMath math={"\\min(f \\times \\text{所持金},\\ \text{掛け金上限})"} />。<br />
+                        最終的な掛け金 = <InlineMath math={"\\min(f \\times \\text{所持金},\\text{掛け金上限})"} />。<br />
                         0 なら統計的に賭けるメリットが無いか、上限が 0 の状態です。
                     </li>
                     <li>
