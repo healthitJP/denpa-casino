@@ -216,7 +216,11 @@ export default function BettingClient({ initialCombos }: Props) {
           results={results}
           netOddsInputs={netOddsInputs}
           setNetOddsInputs={setNetOddsInputs}
+          excludeDraws={excludeDraws}
         />
+      )}
+      {selectedCombo && !stats && !statsLoading && (
+        <p className="text-gray-800">この組み合わせの試合の記録はまだありません。</p>
       )}
 
       {/* winner dropdown */}
@@ -250,7 +254,7 @@ export default function BettingClient({ initialCombos }: Props) {
               : "記録する"}
         </button>
       )}
-      
+
       {/* ----- ガイドライン ----- */}
       <div className="mt-8 p-4 border rounded bg-gray-50 dark:bg-gray-800 dark:text-gray-200 text-sm leading-6">
         <h3 className="font-semibold mb-2">指標の読み方と目安</h3>
@@ -264,11 +268,11 @@ export default function BettingClient({ initialCombos }: Props) {
             参考目安: 0.01 以上=許容、0.05 以上=魅力的、0.10 以上=非常に好条件。
           </li>
           <li>
-            <b>期待利益(平均)</b> … 正なら長期的に利益期待がプラス。金額が大きいほど有利ですが、<br/>
+            <b>期待利益(平均)</b> … 推奨掛け金を賭けた場合の期待利益。正なら長期的に利益期待がプラス。金額が大きいほど有利ですが、<br/>
             対数成長率が十分に高いか・悲観的期待利益もプラスかを必ず確認してください。
           </li>
           <li>
-            <b>悲観的期待利益 (95%下限)</b> … 勝率が統計的に低めだった<br/>
+            <b>悲観的期待利益 (95%下限)</b> … 推奨掛け金を賭けた場合（勝率CIの下限×推奨掛け金）の悲観的期待利益。勝率が統計的に低めだった<br/>
             (区間下限) 場合でもプラスなら「安全域」があると判断できます。<br/>
             0 未満の場合はリスクが高いので見送るのが無難です。
           </li>
