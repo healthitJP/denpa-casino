@@ -1,0 +1,1009 @@
+{
+  "combinations": [
+    {
+      "monsters": [
+        {
+          "name": "アイスシープ",
+          "victories": 118,
+          "netOdds": 1.4
+        },
+        {
+          "name": "ひつかいキツネ",
+          "victories": 93,
+          "netOdds": 1.4
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "あかばなちょう",
+          "victories": 59,
+          "netOdds": 43.7
+        },
+        {
+          "name": "だんごボーイ",
+          "victories": 56,
+          "netOdds": 25
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "ギガントード",
+          "victories": 32,
+          "netOdds": 1.3
+        },
+        {
+          "name": "ブラッドバット",
+          "victories": 152,
+          "netOdds": 2.9
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "こうてつまじん",
+          "victories": 101,
+          "netOdds": 1.1
+        },
+        {
+          "name": "デスイーグル",
+          "victories": 116,
+          "netOdds": 2.2
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "さるゾンビ",
+          "victories": 97,
+          "netOdds": 2.1
+        },
+        {
+          "name": "トゲトゲボーイ",
+          "victories": 77,
+          "netOdds": 1.3
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "てんしのフォーク",
+          "victories": 32,
+          "netOdds": 1.4
+        },
+        {
+          "name": "ビックリッチ",
+          "victories": 23,
+          "netOdds": 1.9
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "ドライウッド",
+          "victories": 87,
+          "netOdds": 1.8
+        },
+        {
+          "name": "ヘビーワーム",
+          "victories": 207,
+          "netOdds": 2.1
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "アイスクラブ",
+          "victories": 91,
+          "netOdds": 1.8
+        },
+        {
+          "name": "かみなりちょう",
+          "victories": 49,
+          "netOdds": 3.7
+        },
+        {
+          "name": "ブルホーン",
+          "victories": 52,
+          "netOdds": 5
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "アイスクラブ",
+          "victories": 40,
+          "netOdds": 3.1
+        },
+        {
+          "name": "がんせきまじん",
+          "victories": 102,
+          "netOdds": 2
+        },
+        {
+          "name": "トーチゴースト",
+          "victories": 34,
+          "netOdds": 16.4
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "アイスクラブ",
+          "victories": 101,
+          "netOdds": 2.4
+        },
+        {
+          "name": "サラマンダー",
+          "victories": 115,
+          "netOdds": 2.1
+        },
+        {
+          "name": "ラッシュボウ",
+          "victories": 21,
+          "netOdds": 8.6
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "アイスクラブ",
+          "victories": 12,
+          "netOdds": 10.2
+        },
+        {
+          "name": "トーチゴースト",
+          "victories": 138,
+          "netOdds": 1.7
+        },
+        {
+          "name": "ラッシュボウ",
+          "victories": 0,
+          "netOdds": 76.4
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "アイスシープ",
+          "victories": 2,
+          "netOdds": 361
+        },
+        {
+          "name": "イビルスパイス",
+          "victories": 43,
+          "netOdds": 3.7
+        },
+        {
+          "name": "ウィンドデビル",
+          "victories": 161,
+          "netOdds": 1.4
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "アイスシープ",
+          "victories": 5,
+          "netOdds": 20.4
+        },
+        {
+          "name": "しびれマタンゴ",
+          "victories": 88,
+          "netOdds": 5.1
+        },
+        {
+          "name": "ドライウッド",
+          "victories": 63,
+          "netOdds": 2.4
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "アイスシープ",
+          "victories": 137,
+          "netOdds": 1.1
+        },
+        {
+          "name": "ダイころがし",
+          "victories": 87,
+          "netOdds": 4.9
+        },
+        {
+          "name": "トゲトゲボーイ",
+          "victories": 50,
+          "netOdds": 2.8
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "あおばなちょう",
+          "victories": 60,
+          "netOdds": 4.9
+        },
+        {
+          "name": "ギガントード",
+          "victories": 57,
+          "netOdds": 2.3
+        },
+        {
+          "name": "ブルホーン",
+          "victories": 84,
+          "netOdds": 3.3
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "いかたいしょう",
+          "victories": 40,
+          "netOdds": 4.9
+        },
+        {
+          "name": "ダークドラゴン",
+          "victories": 103,
+          "netOdds": 1.8
+        },
+        {
+          "name": "パラライズレイ",
+          "victories": 76,
+          "netOdds": 2.2
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "いかたいしょう",
+          "victories": 194,
+          "netOdds": 1.2
+        },
+        {
+          "name": "パラライズレイ",
+          "victories": 35,
+          "netOdds": 4.3
+        },
+        {
+          "name": "ロックシープ",
+          "victories": 0,
+          "netOdds": 231.3
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "いかたいしょう",
+          "victories": 25,
+          "netOdds": 2.2
+        },
+        {
+          "name": "ブラックスパイス",
+          "victories": 19,
+          "netOdds": 1.2
+        },
+        {
+          "name": "ロックシープ",
+          "victories": 0,
+          "netOdds": 95.7
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "ウッキー",
+          "victories": 49,
+          "netOdds": 2.1
+        },
+        {
+          "name": "おおくちばし",
+          "victories": 43,
+          "netOdds": 5.1
+        },
+        {
+          "name": "ネズぶたウサギ",
+          "victories": 95,
+          "netOdds": 2.4
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "がいこつゆうれい",
+          "victories": 158,
+          "netOdds": 2
+        },
+        {
+          "name": "はなざかりもぐら",
+          "victories": 1,
+          "netOdds": 72.3
+        },
+        {
+          "name": "もろこしおばけ",
+          "victories": 138,
+          "netOdds": 1.1
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "カビまんじゅう",
+          "victories": 137,
+          "netOdds": 1.3
+        },
+        {
+          "name": "キャットシーフ",
+          "victories": 5,
+          "netOdds": 57.1
+        },
+        {
+          "name": "ダイころがし",
+          "victories": 105,
+          "netOdds": 2.9
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "かみなりちょう",
+          "victories": 15,
+          "netOdds": 9.7
+        },
+        {
+          "name": "ドライウッド",
+          "victories": 107,
+          "netOdds": 1.2
+        },
+        {
+          "name": "ばけギツネ",
+          "victories": 51,
+          "netOdds": 2.1
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "がんせきまじん",
+          "victories": 31,
+          "netOdds": 4.3
+        },
+        {
+          "name": "はさみサボテン",
+          "victories": 4,
+          "netOdds": 239.1
+        },
+        {
+          "name": "パラライズレイ",
+          "victories": 172,
+          "netOdds": 1.6
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "きゅうけつキャット",
+          "victories": 135,
+          "netOdds": 1.3
+        },
+        {
+          "name": "ジェリーマウス",
+          "victories": 54,
+          "netOdds": 3.3
+        },
+        {
+          "name": "ジュエルロース",
+          "victories": 59,
+          "netOdds": 5.9
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "キラービースト",
+          "victories": 60,
+          "netOdds": 1.5
+        },
+        {
+          "name": "ブラックバード",
+          "victories": 98,
+          "netOdds": 2
+        },
+        {
+          "name": "よつめシャーク",
+          "victories": 0,
+          "netOdds": 178.9
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "クイーン",
+          "victories": 3,
+          "netOdds": 8.4
+        },
+        {
+          "name": "だいちのつかい",
+          "victories": 32,
+          "netOdds": 1.5
+        },
+        {
+          "name": "ブラックバード",
+          "victories": 9,
+          "netOdds": 3.5
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "けんし",
+          "victories": 18,
+          "netOdds": 50.3
+        },
+        {
+          "name": "シールドナイト",
+          "victories": 53,
+          "netOdds": 1.9
+        },
+        {
+          "name": "ルーク",
+          "victories": 213,
+          "netOdds": 1.5
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "ダイころがし",
+          "victories": 169,
+          "netOdds": 1.4
+        },
+        {
+          "name": "どくろマイマイ",
+          "victories": 29,
+          "netOdds": 5.9
+        },
+        {
+          "name": "リーフホッグ",
+          "victories": 23,
+          "netOdds": 6.6
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "だんごボーイ",
+          "victories": 67,
+          "netOdds": 2.1
+        },
+        {
+          "name": "ファイアウッキー",
+          "victories": 99,
+          "netOdds": 1.7
+        },
+        {
+          "name": "ボムパイン",
+          "victories": 38,
+          "netOdds": 7.9
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "デスイーグル",
+          "victories": 9,
+          "netOdds": 2.4
+        },
+        {
+          "name": "フロストゴブリン",
+          "victories": 27,
+          "netOdds": 1.4
+        },
+        {
+          "name": "ブルホーン",
+          "victories": 19,
+          "netOdds": 3.7
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "てっぽうオトシゴ",
+          "victories": 6,
+          "netOdds": 29.2
+        },
+        {
+          "name": "パラライズレイ",
+          "victories": 28,
+          "netOdds": 1.8
+        },
+        {
+          "name": "りくガニ",
+          "victories": 35,
+          "netOdds": 4.1
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "トーチゴースト",
+          "victories": 112,
+          "netOdds": 1.6
+        },
+        {
+          "name": "フローズンミスト",
+          "victories": 71,
+          "netOdds": 2.4
+        },
+        {
+          "name": "ポイズンさそり",
+          "victories": 8,
+          "netOdds": 21.8
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "アイスシープ",
+          "victories": 106,
+          "netOdds": 3.1
+        },
+        {
+          "name": "どくろマイマイ",
+          "victories": 51,
+          "netOdds": 3.9
+        },
+        {
+          "name": "バーサーカー",
+          "victories": 23,
+          "netOdds": 24.8
+        },
+        {
+          "name": "ロックゲーター",
+          "victories": 64,
+          "netOdds": 2.6
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "あおばなちょう",
+          "victories": 25,
+          "netOdds": 19
+        },
+        {
+          "name": "おおナマコ",
+          "victories": 45,
+          "netOdds": 3.5
+        },
+        {
+          "name": "おばけおとしご",
+          "victories": 10,
+          "netOdds": 4.5
+        },
+        {
+          "name": "かいぞくウッキー",
+          "victories": 122,
+          "netOdds": 3.4
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "あかばなちょう",
+          "victories": 0,
+          "netOdds": 134.4
+        },
+        {
+          "name": "トードロック",
+          "victories": 98,
+          "netOdds": 1.6
+        },
+        {
+          "name": "ぶたばなウサギ",
+          "victories": 12,
+          "netOdds": 4.6
+        },
+        {
+          "name": "ポイズンさそり",
+          "victories": 46,
+          "netOdds": 3.3
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "あばれコブダイ",
+          "victories": 12,
+          "netOdds": 1.5
+        },
+        {
+          "name": "タケノこぞう",
+          "victories": 2,
+          "netOdds": 131.2
+        },
+        {
+          "name": "ビリビリクラゲ",
+          "victories": 40,
+          "netOdds": 1.1
+        },
+        {
+          "name": "ロックシープ",
+          "victories": 4,
+          "netOdds": 16
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "あばれコブダイ",
+          "victories": 10,
+          "netOdds": 3.2
+        },
+        {
+          "name": "ハンマーアンコウ",
+          "victories": 13,
+          "netOdds": 2.5
+        },
+        {
+          "name": "ファイヤーころがし",
+          "victories": 7,
+          "netOdds": 8.7
+        },
+        {
+          "name": "れんごくウッキー",
+          "victories": 34,
+          "netOdds": 3.1
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "イビルスパイス",
+          "victories": 142,
+          "netOdds": 1.9
+        },
+        {
+          "name": "バーサクタケノコ",
+          "victories": 119,
+          "netOdds": 2.2
+        },
+        {
+          "name": "フローズンパイン",
+          "victories": 7,
+          "netOdds": 31.9
+        },
+        {
+          "name": "プチトマトおばけ",
+          "victories": 14,
+          "netOdds": 13.1
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "ウィンドビー",
+          "victories": 19,
+          "netOdds": 9.5
+        },
+        {
+          "name": "おばけとうがらし",
+          "victories": 145,
+          "netOdds": 1.7
+        },
+        {
+          "name": "かみなりちょう",
+          "victories": 6,
+          "netOdds": 18
+        },
+        {
+          "name": "マジックエイプ",
+          "victories": 27,
+          "netOdds": 2.7
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "ウィンドビー",
+          "victories": 0,
+          "netOdds": 277.9
+        },
+        {
+          "name": "シールドナイト",
+          "victories": 50,
+          "netOdds": 3.3
+        },
+        {
+          "name": "ハンマーアンコウ",
+          "victories": 53,
+          "netOdds": 2.8
+        },
+        {
+          "name": "ルーク",
+          "victories": 100,
+          "netOdds": 1.9
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "ウィンドビー",
+          "victories": 90,
+          "netOdds": 1.9
+        },
+        {
+          "name": "しびれマタンゴ",
+          "victories": 37,
+          "netOdds": 19.6
+        },
+        {
+          "name": "ブルージャイアント",
+          "victories": 25,
+          "netOdds": 10.1
+        },
+        {
+          "name": "ロックシープ",
+          "victories": 82,
+          "netOdds": 2.7
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "ウィンドビー",
+          "victories": 164,
+          "netOdds": 1.5
+        },
+        {
+          "name": "ドライウッド",
+          "victories": 43,
+          "netOdds": 6.8
+        },
+        {
+          "name": "ばけギツネ",
+          "victories": 31,
+          "netOdds": 4
+        },
+        {
+          "name": "ひつかいキツネ",
+          "victories": 8,
+          "netOdds": 30
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "おばけとうがらし",
+          "victories": 152,
+          "netOdds": 1.3
+        },
+        {
+          "name": "かいぞくウッキー",
+          "victories": 99,
+          "netOdds": 3.1
+        },
+        {
+          "name": "かいぞくキャット",
+          "victories": 2,
+          "netOdds": 57.4
+        },
+        {
+          "name": "ばけギツネ",
+          "victories": 13,
+          "netOdds": 18.9
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "ギガントード",
+          "victories": 0,
+          "netOdds": 156.6
+        },
+        {
+          "name": "ダークドラゴン",
+          "victories": 100,
+          "netOdds": 1.5
+        },
+        {
+          "name": "パラライズレイ",
+          "victories": 82,
+          "netOdds": 2
+        },
+        {
+          "name": "マジックエイプ",
+          "victories": 7,
+          "netOdds": 18
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "キャットシーフ",
+          "victories": 8,
+          "netOdds": 27.4
+        },
+        {
+          "name": "ゴルゴンシャーク",
+          "victories": 101,
+          "netOdds": 2.8
+        },
+        {
+          "name": "さるゾンビ",
+          "victories": 69,
+          "netOdds": 6.6
+        },
+        {
+          "name": "ダイころがし",
+          "victories": 96,
+          "netOdds": 1.7
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "クイーン",
+          "victories": 5,
+          "netOdds": 3.9
+        },
+        {
+          "name": "かぜつかい",
+          "victories": 0,
+          "netOdds": 44.7
+        },
+        {
+          "name": "ビショップ",
+          "victories": 9,
+          "netOdds": 3.3
+        },
+        {
+          "name": "ブラックバード",
+          "victories": 23,
+          "netOdds": 1.7
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "クイーン",
+          "victories": 52,
+          "netOdds": 7
+        },
+        {
+          "name": "シールドナイト",
+          "victories": 30,
+          "netOdds": 11.1
+        },
+        {
+          "name": "ビショップ",
+          "victories": 35,
+          "netOdds": 3.4
+        },
+        {
+          "name": "プラチナドラゴン",
+          "victories": 90,
+          "netOdds": 5.6
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "トードロック",
+          "victories": 112,
+          "netOdds": 1.9
+        },
+        {
+          "name": "はなもぐら",
+          "victories": 33,
+          "netOdds": 7.7
+        },
+        {
+          "name": "ポイズンさそり",
+          "victories": 47,
+          "netOdds": 4.6
+        },
+        {
+          "name": "もろこしおばけ",
+          "victories": 76,
+          "netOdds": 3.3
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "はなもぐら",
+          "victories": 57,
+          "netOdds": 2.8
+        },
+        {
+          "name": "ネズミもぐら",
+          "victories": 47,
+          "netOdds": 3.2
+        },
+        {
+          "name": "はなかざりもぐら",
+          "victories": 33,
+          "netOdds": 2.7
+        },
+        {
+          "name": "きんピカもぐら",
+          "victories": 45,
+          "netOdds": 3.5
+        }
+      ]
+    },
+    {
+      "monsters": [
+        {
+          "name": "ビースト",
+          "victories": 96,
+          "netOdds": 2.4
+        },
+        {
+          "name": "キラービースト",
+          "victories": 21,
+          "netOdds": 16.9
+        },
+        {
+          "name": "プラチナドラゴン",
+          "victories": 59,
+          "netOdds": 4.6
+        },
+        {
+          "name": "ビショップ",
+          "victories": 41,
+          "netOdds": 1.9
+        }
+      ]
+    }
+  ]
+}
