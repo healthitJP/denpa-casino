@@ -24,3 +24,29 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@keyframes rainbow-loop {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -200% 0; /* move two full widths for faster movement */
+  }
+}
+
+.rainbow-border-animate {
+  /* Duplicate color sequence at both ends for seamless tiling */
+  background: linear-gradient(
+    90deg,
+    red 0%,
+    orange 14%,
+    yellow 28%,
+    green 42%,
+    blue 57%,
+    indigo 71%,
+    violet 85%,
+    red 100%
+  );
+  background-size: 400% 100%; /* larger pattern so faster relative movement */
+  animation: rainbow-loop 2s linear infinite;
+}

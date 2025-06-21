@@ -6,7 +6,7 @@ export default function Home() {
     <section className="flex flex-col items-center justify-center text-center gap-10 py-24 px-4 max-w-3xl mx-auto">
       <h1 className="text-4xl font-extrabold leading-tight">
         電波人間のRPG Free カジノ格闘場 <br className="hidden sm:block" />
-        統計記録＆期待値計算アプリ
+        シミュレーション&対戦記録アプリ
       </h1>
       <p className="text-lg text-gray-600 dark:text-gray-300">
         過去データとユーザーが記録した最新の試合結果をもとに、<br />
@@ -19,7 +19,7 @@ export default function Home() {
         href="/betting"
         className="px-8 py-4 bg-gray-600 text-white rounded-full text-xl hover:bg-gray-700 transition"
       >
-        ベッティングを始める
+        賭けをシミュレーションする
       </Link>
     </section>
   );

@@ -1,5 +1,6 @@
 import React from 'react'
 import { BettingResult } from '../hooks/useBettingResults'
+import RainbowBorder from "../../../components/RainbowBorder"
 
 interface Props {
     stats: any | null
@@ -11,14 +12,30 @@ interface Props {
 
 export default function StatsGrid({ stats, results, netOddsInputs, setNetOddsInputs, excludeDraws }: Props) {
     if (!stats) return null
+
+    // Find the maximum log growth among the betting results (ignore undefined)
+    const maxLogGrowth = React.useMemo(() => {
+        const values = results
+            .filter((r) => r && typeof r.logGrowth === "number")
+            .map((r) => r.logGrowth)
+        return values.length > 0 ? Math.max(...values) : -Infinity
+    }, [results])
+
     return (
         <div className="flex flex-row gap-4 overflow-auto">
             {stats.monsters.map((stat: any, idx: number) => {
                 const res = results[idx]
-                return (
-                    <div key={stat.name} className="flex flex-col gap-2 border rounded p-4 w-52">
+                const isHighlighted =
+                    res && typeof res.logGrowth === "number" && res.logGrowth === maxLogGrowth
+
+                const Card = (
+                    <div
+                        className={`flex flex-col gap-2 ${
+                            isHighlighted ? "" : "border"
+                        } rounded p-4 w-52 bg-white dark:bg-gray-900`}
+                    >
                         <h2 className="font-bold text-lg text-center">{stat.name}</h2>
-                        <div className="text-sm text-gray-600">勝率: {(res?.winProb * 100).toFixed(1)}%</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-300">勝率: {(res?.winProb * 100).toFixed(1)}%</div>
                         <div className="text-xs text-gray-500">勝利数: {stat.wins} / {stats.total_matches}</div>
                         <label className="text-sm flex flex-col gap-1">
                             純オッズ（倍率）:
@@ -45,12 +62,18 @@ export default function StatsGrid({ stats, results, netOddsInputs, setNetOddsInp
                         )}
                     </div>
                 )
+
+                return isHighlighted ? (
+                    <RainbowBorder key={stat.name}>{Card}</RainbowBorder>
+                ) : (
+                    <React.Fragment key={stat.name}>{Card}</React.Fragment>
+                )
             })}
             {/* Draw rate card */}
             {!excludeDraws && (
                 <div key="DRAW" className="flex flex-col gap-2 border rounded p-4 w-52">
                     <h2 className="font-bold text-lg text-center">引き分け</h2>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-gray-600 dark:text-gray-300">
                         引き分け率: {stats.total_matches > 0 ? ((stats.draw_count / stats.total_matches) * 100).toFixed(1) : "-"}%
                     </div>
                     <div className="text-xs text-gray-500">引き分け数: {stats.draw_count} / {stats.total_matches}</div>

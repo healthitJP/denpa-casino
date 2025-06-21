@@ -29,11 +29,18 @@ export default function RainbowBorder({
   return (
     <div
       className={[
-        "p-[1px] rounded bg-[conic-gradient(red,orange,yellow,green,blue,indigo,violet)]",
+        "p-[2px] rounded-lg overflow-hidden rainbow-border-animate shadow-md",
         className,
       ].join(" ")}
     >
-      <div className={["rounded", innerClassName].join(" ")}>{children}</div>
+      <div
+        className={[
+          "rounded-lg bg-white border border-gray-200",
+          innerClassName,
+        ].join(" ")}
+      >
+        {children}
+      </div>
     </div>
   );
 } 
