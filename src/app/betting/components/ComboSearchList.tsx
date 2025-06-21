@@ -15,7 +15,15 @@ interface Props {
 export default function ComboSearchList({ combos, selectedId, onSelect, searchText, setSearchText }: Props) {
   const filtered = React.useMemo(() => {
     if (!searchText) return combos
-    return combos.filter((c) => c.monsters.some((m) => m.name.includes(searchText)))
+    // 分割: スペース・スラッシュ(／/)
+    const keywords = searchText
+      .split(/[\s/／]+/)
+      .map((s) => s.trim())
+      .filter((s) => s)
+
+    return combos.filter((c) =>
+      keywords.every((kw) => c.monsters.some((m) => m.name.includes(kw)))
+    )
   }, [searchText, combos])
 
   return (

@@ -6,17 +6,18 @@ import { createClient } from "../../utils/supabaseBrowser";
 import StatSelector from "../../components/StatSelector";
 import StatsTable from "../../components/StatsTable";
 import { StatsCombination, StatsResponseBody, StatsMode } from "../../types/stats";
+import { usePersistentGroupIds } from "../../hooks/usePersistentGroupIds";
 
 export default function DashboardPage() {
   const supabase = React.useMemo(() => createClient(), []);
   const [mode, setMode] = React.useState<StatsMode>("self");
   const [includeDefault, setIncludeDefault] = React.useState(true);
   const [excludeDraws, setExcludeDraws] = React.useState(false);
-  const [groupIds, setGroupIds] = React.useState<string[]>([]);
+  const [selfId, setSelfId] = React.useState<string>("");
+  const [groupIds, setGroupIds] = usePersistentGroupIds(selfId);
   const [data, setData] = React.useState<StatsCombination[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const [selfId, setSelfId] = React.useState<string>("");
 
   // fetch self uid once
   React.useEffect(() => {
@@ -24,7 +25,6 @@ export default function DashboardPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setSelfId(user.id);
-        setGroupIds([user.id]);
       }
     })();
   }, [supabase]);
@@ -36,7 +36,7 @@ export default function DashboardPage() {
     const { data: resp, error } = await supabase.functions.invoke("stats", {
       body: {
         mode,
-        include_default: true,
+        include_default: includeDefault,
         exclude_draws: excludeDraws,
         group_ids: groupIds,
       },
@@ -73,7 +73,7 @@ export default function DashboardPage() {
         {loading ? "取得中..." : "統計取得"}
       </button>
       {error && <p className="text-red-600">{error}</p>}
-      {data.length > 0 && <StatsTable data={data} />}
+      {data.length > 0 && <StatsTable data={data} excludeDraws={excludeDraws} />}
     </div>
   );
 } 

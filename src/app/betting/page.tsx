@@ -2,6 +2,7 @@
 // render lightweight client component for user interaction.
 
 import { createClient } from "../../utils/supabaseServer";
+// @ts-ignore false positive due to Next.js app dir resolution
 import BettingClient from "./BettingClient";
 
 export default async function BettingPage() {
