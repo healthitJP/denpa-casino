@@ -21,6 +21,14 @@ export default function Home() {
       >
         賭けをシミュレーションする
       </Link>
+      <a
+        href="https://x.com/_____uxoxu__"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-4 text-blue-500 underline hover:text-blue-700"
+      >
+        不具合報告はこちら（X: @_____uxoxu__）
+      </a>
     </section>
   );
 }
