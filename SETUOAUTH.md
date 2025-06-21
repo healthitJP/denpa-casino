@@ -14,7 +14,8 @@ Supabase Auth には **クライアント ID / シークレット** と **リダ
 http://localhost:3000/login
 http://localhost:3000/api/auth/callback
 
-
+https://denpa-casino-git-main-hawawapuddings-projects.vercel.app/login
+https://denpa-casino-git-main-hawawapuddings-projects.vercel.app/api/auth/callback
 ```
 
 1. Supabase ダッシュボード → Auth → Settings → **Redirect URLs** に上記 4 行を登録
