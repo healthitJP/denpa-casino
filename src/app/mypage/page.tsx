@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { createClient } from "../utils/supabaseBrowser";
+import { createClient } from "../../utils/supabaseBrowser";
 import { ClipboardIcon } from "@heroicons/react/24/outline";
 
 export default function MyPage() {

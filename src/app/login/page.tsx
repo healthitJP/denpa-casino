@@ -2,7 +2,7 @@
 "use client";
 
 import React from "react";
-import { createClient } from "../utils/supabaseBrowser";
+import { createClient } from "../../utils/supabaseBrowser";
 
 export default function LoginPage() {
   const supabase = React.useMemo(() => createClient(), []);
