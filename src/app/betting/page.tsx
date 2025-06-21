@@ -1,91 +1,130 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import monsterData from "@/data/monsterList.json";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   actualBetFraction,
   actualLogGrowthRate,
   expectedValue,
   binomialConfidenceInterval95,
-} from "@/utils/math";
-
-// 型定義
-interface Monster {
-  name: string;
-  victories: number;
-}
-interface Combination {
-  monsters: Monster[];
-}
-
-const combinations: Combination[] = monsterData.combinations;
+} from "../../utils/math";
+import { createClient } from "../../utils/supabaseBrowser";
+import StatSelector from "../../components/StatSelector";
+import { StatsCombination, StatsResponseBody, StatsMode } from "../../types/stats";
 
 export default function BettingPage() {
-  // 入力系の状態
+  const supabase = useMemo(() => createClient(), []);
+
+  // combinations from supabase
+  const [combinations, setCombinations] = useState<{ id: number; monsters: any[] }[]>([]);
+  const [loadingComb, setLoadingComb] = useState(true);
+
+  // selector values for stats
+  const [mode, setMode] = useState<StatsMode>("self");
+  const [includeDefault, setIncludeDefault] = useState(true);
+  const [excludeDraws, setExcludeDraws] = useState(false);
+  const [groupIds, setGroupIds] = useState<string[]>([]);
+  const [selfId, setSelfId] = useState<string>("");
+
+  // Selected combination id
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const selectedCombo = combinations.find((c) => c.id === selectedId) ?? null;
+
+  // Stats for selected combination
+  const [stats, setStats] = useState<StatsCombination | null>(null);
+  const [statsLoading, setStatsLoading] = useState(false);
+
+  // Inputs
   const [searchText, setSearchText] = useState("");
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [wealth, setWealth] = useState<number>(1000);
   const [maxBet, setMaxBet] = useState<number>(100);
   const [netOddsInputs, setNetOddsInputs] = useState<number[]>([]);
+  const [winner, setWinner] = useState<string>("DRAW");
 
-  // 組のフィルタリング
-  const filteredIndices = useMemo(() => {
-    if (!searchText) return combinations.map((_, i) => i);
-    return combinations.reduce<number[]>((acc, combo, idx) => {
-      const hit = combo.monsters.some((m) => m.name.includes(searchText));
-      if (hit) acc.push(idx);
-      return acc;
-    }, []);
-  }, [searchText]);
+  const [message, setMessage] = useState<string | null>(null);
 
-  // 選択された組
-  const selectedCombo = selectedIndex !== null ? combinations[selectedIndex] : null;
+  if (loadingComb) {
+    return <p className="p-6">組データを読み込み中...</p>;
+  }
 
-  // 選択が変わったら netOdds 入力長を調整
+  // fetch self uid and combinations once
+  useEffect(() => {
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setSelfId(user.id);
+        setGroupIds([user.id]);
+      }
+      // fetch combos
+      const { data, error } = await supabase.from("combinations").select("id, monsters");
+      if (!error && data) {
+        setCombinations(data as any);
+      }
+      setLoadingComb(false);
+    })();
+  }, [supabase]);
+
+  // fetch stats when selectedId or options change
+  useEffect(() => {
+    if (!selectedId) return;
+    setStatsLoading(true);
+    supabase.functions.invoke("stats", {
+      body: {
+        mode,
+        include_default: includeDefault,
+        exclude_draws: excludeDraws,
+        group_ids: groupIds,
+      },
+    }).then(({ data, error }) => {
+      if (error) {
+        setMessage(error.message);
+        setStats(null);
+      } else {
+        const body = data as StatsResponseBody;
+        const comb = body.combinations.find((c) => c.combination_id === selectedId) ?? null;
+        setStats(comb);
+        if (comb) {
+          // set default netOdds inputs
+          setNetOddsInputs(comb.monsters.map((m) => Number(m.avg_net_odds.toFixed(2))));
+        }
+      }
+      setStatsLoading(false);
+    });
+  }, [selectedId, mode, includeDefault, excludeDraws, groupIds, supabase]);
+
+  // filter indices based on search
+  const filtered = useMemo(() => {
+    if (!searchText) return combinations;
+    return combinations.filter((combo) => combo.monsters.some((m) => m.name.includes(searchText)));
+  }, [searchText, combinations]);
+
   const monsterCount = selectedCombo?.monsters.length ?? 0;
-  useMemo(() => {
-    if (!selectedCombo) return;
-    setNetOddsInputs((prev) =>
-      Array.from({ length: monsterCount }).map(
-        (_, i) => prev[i] ?? (selectedCombo.monsters[i] as any).netOdds ?? 0
-      )
-    );
-  }, [selectedIndex, monsterCount, selectedCombo]);
 
-  // 計算結果
+  // calculate results
   const results = useMemo(() => {
-    if (!selectedCombo) return [];
-    const totalVictories = selectedCombo.monsters.reduce(
-      (sum, m) => sum + m.victories,
-      0
-    );
-    return selectedCombo.monsters.map((monster, idx) => {
-      const winProb = monster.victories / totalVictories;
-      const netOdds = netOddsInputs[idx] ?? (monster as any).netOdds ?? 0;
-
-      // ガード: 入力が未設定や不正なら結果0扱い
+    if (!stats || !selectedCombo) return [];
+    const totalMatches = stats.total_matches - (excludeDraws ? stats.draw_count : 0);
+    return stats.monsters.map((stat, idx) => {
+      const winProb = totalMatches > 0 ? stat.wins / totalMatches : 0;
+      const netOdds = netOddsInputs[idx] ?? stat.avg_net_odds ?? 0;
       if (!(wealth > 0) || !(netOdds > 0)) {
         return {
-          monster,
+          stat,
           winProb,
           netOdds,
           fraction: 0,
           betAmount: 0,
           logGrowth: 0,
           expected: 0,
-          ci: binomialConfidenceInterval95(totalVictories, monster.victories),
+          ci: binomialConfidenceInterval95(stats.total_matches, stat.wins),
           pessimisticExpected: 0,
         } as any;
       }
-
       const fraction = actualBetFraction(maxBet, wealth, winProb, netOdds);
       const betAmount = wealth * fraction;
-
-      // 95% CI
-      const ci = binomialConfidenceInterval95(totalVictories, monster.victories);
+      const ci = binomialConfidenceInterval95(stats.total_matches, stat.wins);
       const pessExpected = expectedValue(betAmount, ci.lower, netOdds);
       return {
-        monster,
+        stat,
         winProb,
         netOdds,
         fraction,
@@ -96,13 +135,68 @@ export default function BettingPage() {
         pessimisticExpected: pessExpected,
       };
     });
-  }, [selectedCombo, netOddsInputs, wealth, maxBet]);
+  }, [stats, selectedCombo, netOddsInputs, wealth, maxBet, excludeDraws]);
 
-  // ---------------- UI ----------------
+  async function handleRecord() {
+    setMessage(null);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return (window.location.href = "/login");
+    }
+    if (!selectedId || !stats) {
+      setMessage("組を選択してください");
+      return;
+    }
+
+    const betDetails = results.map((r) => ({
+      name: r.stat.name,
+      netOdds: r.netOdds,
+      betAmount: Number(r.betAmount.toFixed(2)),
+      recommendedFraction: Number(r.fraction.toFixed(4)),
+    }));
+
+    const { error } = await supabase.from("bets_records").insert({
+      user_id: user.id,
+      combination_id: selectedId,
+      outcome_monster_name: winner === "DRAW" ? null : winner,
+      is_draw: winner === "DRAW",
+      total_wealth: wealth,
+      max_bet: maxBet,
+      bet_details: betDetails,
+    });
+
+    if (error) {
+      setMessage(`エラー: ${error.message}`);
+    } else {
+      setMessage("記録しました");
+      // reset selection
+      setSelectedId(null);
+      setResultsReset();
+    }
+  }
+
+  function setResultsReset() {
+    setNetOddsInputs([]);
+    setWinner("DRAW");
+  }
+
   return (
-    <div className="flex flex-col gap-6 p-6 max-w-5xl mx-auto">
-      <h1 className="text-2xl font-semibold">モンスターベッティングシミュレータ</h1>
-      {/* 検索 + セレクト */}
+    <div className="flex flex-col gap-6 p-6 max-w-6xl mx-auto">
+      <h1 className="text-2xl font-semibold">モンスターベッティング</h1>
+
+      <StatSelector
+        mode={mode}
+        setMode={setMode}
+        includeDefault={includeDefault}
+        setIncludeDefault={setIncludeDefault}
+        excludeDraws={excludeDraws}
+        setExcludeDraws={setExcludeDraws}
+        groupIds={groupIds}
+        setGroupIds={setGroupIds}
+        selfId={selfId}
+      />
+
+      {/* search and select */}
       <div className="flex flex-col gap-2">
         <input
           type="text"
@@ -111,18 +205,19 @@ export default function BettingPage() {
           onChange={(e) => setSearchText(e.target.value)}
           className="border rounded px-3 py-2"
         />
-        {/* オプション一覧 */}
         <div className="max-h-60 overflow-y-auto border rounded">
-          {filteredIndices.map((idx) => {
-            const combo = combinations[idx];
+          {filtered.map((combo) => {
             const label = combo.monsters.map((m) => m.name).join(" / ");
             return (
               <button
-                key={idx}
+                key={combo.id}
                 className={`block w-full text-left px-3 py-1 hover:bg-blue-100 ${
-                  idx === selectedIndex ? "bg-blue-200" : ""
+                  combo.id === selectedId ? "bg-blue-200" : ""
                 }`}
-                onClick={() => setSelectedIndex(idx)}
+                onClick={() => {
+                  setSelectedId(combo.id);
+                  setResultsReset();
+                }}
               >
                 {label}
               </button>
@@ -131,7 +226,7 @@ export default function BettingPage() {
         </div>
       </div>
 
-      {/* 資金 & 上限入力 */}
+      {/* wealth inputs */}
       <div className="flex flex-wrap gap-4">
         <label className="flex items-center gap-2">
           所持金:
@@ -153,22 +248,35 @@ export default function BettingPage() {
         </label>
       </div>
 
-      {/* 選択された組 表示 */}
+      {/* winner dropdown */}
       {selectedCombo && (
+        <div className="flex items-center gap-2">
+          <label>試合結果 (勝者):</label>
+          <select
+            className="border rounded p-2"
+            value={winner}
+            onChange={(e) => setWinner(e.target.value)}
+          >
+            <option value="DRAW">引き分け</option>
+            {selectedCombo.monsters.map((m) => (
+              <option key={m.name} value={m.name}>
+                {m.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {/* selected combo display */}
+      {statsLoading && <p>統計取得中...</p>}
+      {selectedCombo && stats && (
         <div className="flex flex-row gap-4 overflow-auto">
-          {selectedCombo.monsters.map((monster, idx) => {
+          {stats.monsters.map((stat, idx) => {
             const res = results[idx];
             return (
-              <div
-                key={monster.name}
-                className="flex flex-col gap-2 border rounded p-4 w-52"
-              >
-                <h2 className="font-bold text-lg text-center">
-                  {monster.name}
-                </h2>
-                <div className="text-sm text-gray-600">
-                  勝率: {(res?.winProb * 100).toFixed(1)}%
-                </div>
+              <div key={stat.name} className="flex flex-col gap-2 border rounded p-4 w-52">
+                <h2 className="font-bold text-lg text-center">{stat.name}</h2>
+                <div className="text-sm text-gray-600">勝率: {(res?.winProb * 100).toFixed(1)}%</div>
                 <label className="text-sm flex flex-col gap-1">
                   純オッズ:
                   <input
@@ -185,24 +293,12 @@ export default function BettingPage() {
                     className="border rounded px-2 py-1"
                   />
                 </label>
-
                 {res && res.netOdds > 0 && (
                   <>
-                    <div className="text-sm">
-                      推奨掛け金: {res.betAmount.toFixed(2)}
-                    </div>
-                    <div className="text-sm">
-                      対数成長率: {res.logGrowth.toFixed(4)}
-                    </div>
-                    <div className="text-sm">
-                      期待利益(平均): {res.expected.toFixed(2)}
-                    </div>
-                    <div className="text-sm">
-                      悲観的期待利益 (95%下限): {res.pessimisticExpected.toFixed(2)}
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      勝率CI: {(res.ci.lower * 100).toFixed(1)}% – {(res.ci.upper * 100).toFixed(1)}%
-                    </div>
+                    <div className="text-sm">推奨掛け金: {res.betAmount.toFixed(2)}</div>
+                    <div className="text-sm">対数成長率: {res.logGrowth.toFixed(4)}</div>
+                    <div className="text-sm">期待利益: {res.expected.toFixed(2)}</div>
+                    <div className="text-sm">悲観的期待利益: {res.pessimisticExpected.toFixed(2)}</div>
                   </>
                 )}
               </div>
@@ -211,33 +307,17 @@ export default function BettingPage() {
         </div>
       )}
 
-      {/* ----- ガイドライン ----- */}
-      <div className="mt-8 p-4 border rounded bg-gray-50 dark:bg-gray-800 dark:text-gray-200 text-sm leading-6">
-        <h3 className="font-semibold mb-2">指標の読み方と目安</h3>
-        <ul className="list-disc ml-5 space-y-1">
-          <li>
-            <b>推奨掛け金</b> … ケリー基準に基づく最適額 (所持金×割合) と掛け金上限の小さい方。
-            0 なら統計的に賭けるメリットが無いか、上限が 0 の状態です。
-          </li>
-          <li>
-            <b>対数成長率</b> … 0 より大きい場合のみ賭ける価値があります。<br/>
-            参考目安: 0.01 以上=許容、0.05 以上=魅力的、0.10 以上=非常に好条件。
-          </li>
-          <li>
-            <b>期待利益(平均)</b> … 正なら長期的に利益期待がプラス。金額が大きいほど有利ですが、<br/>
-            対数成長率が十分に高いか・悲観的期待利益もプラスかを必ず確認してください。
-          </li>
-          <li>
-            <b>悲観的期待利益 (95%下限)</b> … 勝率が統計的に低めだった<br/>
-            (区間下限) 場合でもプラスなら「安全域」があると判断できます。<br/>
-            0 未満の場合はリスクが高いので見送るのが無難です。
-          </li>
-          <li>
-            <b>勝率 CI</b> … 区間が狭いほど過去データが豊富。幅が広い場合は不確実性が高く、
-            悲観的期待利益を重視することを推奨します。
-          </li>
-        </ul>
-      </div>
+      {/* record button */}
+      {selectedCombo && (
+        <button
+          onClick={handleRecord}
+          className="px-6 py-3 bg-green-600 text-white rounded self-start"
+        >
+          記録する
+        </button>
+      )}
+
+      {message && <p className="text-blue-600">{message}</p>}
     </div>
   );
 } 
