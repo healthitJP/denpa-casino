@@ -10,9 +10,10 @@ export default function LoginPage() {
   async function signInGoogle() {
     await supabase.auth.signInWithOAuth({ provider: "google" });
   }
-  async function signInTwitter() {
-    await supabase.auth.signInWithOAuth({ provider: "twitter" });
-  }
+  // Twitter ログインは一旦無効化
+  // async function signInTwitter() {
+  //   await supabase.auth.signInWithOAuth({ provider: "twitter" });
+  // }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-6">
@@ -23,12 +24,18 @@ export default function LoginPage() {
       >
         Google で続行
       </button>
+      {/**
+       * Twitter ログインを一時的に無効化
+       * 以下のブロックを元に戻すと再び有効
+       */}
+      {/*
       <button
         onClick={signInTwitter}
         className="px-6 py-3 bg-black text-white rounded"
       >
         X (Twitter) で続行
       </button>
+      */}
     </div>
   );
 } 

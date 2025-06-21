@@ -19,6 +19,8 @@ https://denpa-casino-git-main-hawawapuddings-projects.vercel.app/api/auth/callba
 
 https://denpa-casino.vercel.app/login
 https://denpa-casino.vercel.app/api/auth/callback
+
+https://ckaytyqlmouzwqkzoozn.supabase.co/auth/v1/callback
 ```
 
 1. Supabase ダッシュボード → Auth → Settings → **Redirect URLs** に上記 4 行を登録
@@ -32,17 +34,14 @@ https://denpa-casino.vercel.app/api/auth/callback
    - アプリ名 / サポートメール / デベロッパー連絡先を入力
    - スコープはデフォルト (email, profile, openid) で十分
 2. 「**認証情報** → **OAuth クライアント ID**」を新規作成 (アプリケーションの種類 = **ウェブアプリ**)
-   - **承認済みリダイレクト URI** に *共通リダイレクト URL* 4 行を追加
+   - **承認済みリダイレクト URI** に *共通リダイレクト URL* 5 行を追加
    - 名前例: `denpa-casino web` など分かりやすい物にする
    - Google OAuth の仕様上、**1 つのクライアント ID に複数の URI** を登録できるため、**ローカルと本番を分けず 1 件で OK** です。
      （必要なら環境ごとにクライアント ID を発行 → Supabase 環境変数で切替えても可）
    - 参考: [Google OAuth 2.0 Web apps](https://developers.google.com/identity/protocols/oauth2?hl=ja#web)
 3. 発行された **クライアント ID / クライアント シークレット** を控える
 4. Supabase ダッシュボード → Auth → **Google** タブを有効化し、ID / シークレットを貼り付けて保存
-```
-https://ckaytyqlmouzwqkzoozn.supabase.co/auth/v1/callback
-```
-これも追加
+
 
 ### よくあるエラー
 | エラー | 原因 | 解決策 |
@@ -59,7 +58,7 @@ Twitter は 2024 年時点で **OAuth2** が推奨です。（Supabase は v2 �
 1. [developer.twitter.com](https://developer.twitter.com/) → *Project & Apps* → **Add App**
 2. **User authentication settings** を **OAuth 2.0** (3-legged) に変更
    - *Type of App* → *Web App, Automated App or Bot*
-   - **Callback URI / Redirect URI** → 共通 4 行を追加
+   - **Callback URI / Redirect URI** → 共通 5 行を追加
    - **Website URL** → 本番サイトの URL で OK
    - **Client ID / Secret** が生成される
    - **Scopes** は `tweet.read users.read offline.access` 程度で十分（メール取得は不可）
