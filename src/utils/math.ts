@@ -1,5 +1,5 @@
 /**
- * ケリー基準に基づき、最適な賭け割合を計算する関数（純オッズ版）
+ * ケリー基準 (Full Kelly) の 1/4 倍を推奨掛け金として返す関数（純オッズ版）
  * @param winProb 勝率（0〜1の実数）
  * @param netOdds 純オッズ（例: 1.0 なら1倍の純利益。2.0倍配当なら純オッズは1.0）
  * @returns ケリー最適割合（0未満なら0、1超なら1にクリップ）
@@ -7,9 +7,15 @@
 export function kellyFraction(winProb: number, netOdds: number): number {
   if (netOdds <= 0) return 0; // 純オッズ0以下は賭ける意味がない
   if (winProb < 0 || winProb > 1) throw new Error("winProbは0〜1の範囲で指定してください");
-  const f = (winProb * netOdds - (1 - winProb)) / netOdds;
+
+  // Full Kelly
+  const fullKelly = (winProb * netOdds - (1 - winProb)) / netOdds;
+
+  // 1/4 Kelly を採用 (リスク低減)
+  const quarterKelly = fullKelly * 0.25;
+
   // 0未満は0、1超は1にクリップ
-  return Math.max(0, Math.min(1, f));
+  return Math.max(0, Math.min(1, quarterKelly));
 }
 
 /**
