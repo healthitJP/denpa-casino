@@ -10,6 +10,7 @@ import StatsGrid from "./components/StatsGrid";
 import { useBettingResults } from "./hooks/useBettingResults";
 import TopProgressBar from "./components/TopProgressBar";
 import RecentRecords from "./components/RecentRecords";
+import { InlineMath } from "react-katex";
 
 interface Props {
     initialCombos: { id: number; monsters: any[] }[];
@@ -199,7 +200,7 @@ export default function BettingClient({ initialCombos }: Props) {
     return (
         <div className="flex flex-col gap-6 p-6 max-w-6xl mx-auto">
             <TopProgressBar active={isSubmitting} />
-            <h1 className="text-2xl font-semibold">モンスターベッティング</h1>
+            <h1 className="text-2xl font-semibold">格闘場シミュレーション</h1>
 
             <ComboSearchList
                 combos={combinations}
@@ -309,26 +310,26 @@ export default function BettingClient({ initialCombos }: Props) {
                 <ul className="list-disc ml-5 space-y-1">
                     <li>
                         <b>推奨掛け金</b> … <u>1/4 ケリー</u> (Quarter Kelly) による推奨額です。<br />
-                        まず <code>f_kelly = (p × b − (1 − p)) / b</code> (Full Kelly) を求め、<br />
-                        <code>f = 0.25 × f_kelly</code> として所持金に掛けます。<br />
-                        最終的な掛け金 = <code>min(f × 所持金, 掛け金上限)</code>。<br />
+                        まず <InlineMath math={"f_{\\text{kelly}} = \\frac{p \\times b - (1 - p)}{b}"} /> (Full Kelly) を求め、<br />
+                        <InlineMath math={"f = 0.25 \\times f_{\\text{kelly}}"} /> として所持金に掛けます。<br />
+                        最終的な掛け金 = <InlineMath math={"\\min(f \\times \\text{所持金},\\ \text{掛け金上限})"} />。<br />
                         0 なら統計的に賭けるメリットが無いか、上限が 0 の状態です。
                     </li>
                     <li>
                         <b>対数成長率</b> (log-growth) … 期待される資産対数増加率。<br />
-                        <code>g = p × ln(1 + f × b) + (1 − p) × ln(1 − f)</code><br />
+                        <InlineMath math={"g = p \\times \\ln(1 + f \\times b) + (1 - p) \\times \\ln(1 - f)"} /><br />
                         0 より大きい値のみ賭ける価値があります。<br />
                         参考目安: 0.01 以上=許容、0.05 以上=魅力的、0.10 以上=非常に好条件。
                     </li>
                     <li>
                         <b>期待利益 (平均)</b> … 推奨掛け金を賭けた場合の平均利益。<br />
-                        <code>E[profit] = p × bet × b − (1 − p) × bet</code><br />
+                        <InlineMath math={"E[\\text{profit}] = p \\times \\text{bet} \\times b - (1 - p) \\times \\text{bet}"} /><br />
                         正なら長期的に利益期待がプラス。金額が大きいほど有利ですが、<br />
                         対数成長率が十分に高いか・悲観的期待利益もプラスかを必ず確認してください。
                     </li>
                     <li>
-                        <b>悲観的期待利益 (95%下限)</b> … 勝率の95%信頼区間下限 <code>p_lower</code> を用いて<br />
-                        <code>p = p_lower</code> として同じ式で計算した利益。<br />
+                        <b>悲観的期待利益 (95%下限)</b> … 勝率の95%信頼区間下限 <InlineMath math={"p_{\\text{lower}}"} /> を用いて<br />
+                        <InlineMath math={"p = p_{\\text{lower}}"} /> として同じ式で計算した利益。<br />
                         0 未満の場合はリスクが高いので見送りが無難です。
                     </li>
                     <li>
