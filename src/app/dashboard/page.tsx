@@ -36,7 +36,7 @@ export default function DashboardPage() {
     const { data: resp, error } = await supabase.functions.invoke("stats", {
       body: {
         mode,
-        include_default: includeDefault,
+        include_default: true,
         exclude_draws: excludeDraws,
         group_ids: groupIds,
       },
@@ -67,7 +67,7 @@ export default function DashboardPage() {
       />
       <button
         onClick={fetchStats}
-        className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+        className="px-4 py-2 bg-gray-600 text-white rounded disabled:opacity-50"
         disabled={loading}
       >
         {loading ? "取得中..." : "統計取得"}

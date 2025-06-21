@@ -26,6 +26,21 @@ for select
 to authenticated
 using ( id = (select auth.uid()) );
 
+-- 自分自身のプロファイルのみ作成可能
+create policy "insert own profile"
+on public.users
+for insert
+to authenticated
+with check ( id = (select auth.uid()) );
+
+-- 自分自身のプロファイルのみ更新可能
+create policy "update own profile"
+on public.users
+for update
+to authenticated
+using ( id = (select auth.uid()) )
+with check ( id = (select auth.uid()) );
+
 -- ========== combinations ====================================
 create table public.combinations (
   id serial primary key,

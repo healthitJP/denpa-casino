@@ -16,7 +16,7 @@ export default function Home() {
       </p>
       <Link
         href="/betting"
-        className="px-8 py-4 bg-blue-600 text-white rounded-full text-xl hover:bg-blue-700 transition"
+        className="px-8 py-4 bg-gray-600 text-white rounded-full text-xl hover:bg-gray-700 transition"
       >
         ベッティングを始める
       </Link>

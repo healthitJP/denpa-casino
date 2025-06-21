@@ -3,6 +3,7 @@
 
 import React from "react";
 import { createClient } from "../../utils/supabaseBrowser";
+import GoogleLoginButton from "../../components/GoogleLoginButton";
 
 export default function LoginPage() {
   const supabase = React.useMemo(() => createClient(), []);
@@ -18,12 +19,7 @@ export default function LoginPage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-6">
       <h1 className="text-3xl font-bold">ログイン / サインアップ</h1>
-      <button
-        onClick={signInGoogle}
-        className="px-6 py-3 bg-blue-600 text-white rounded"
-      >
-        Google で続行
-      </button>
+      <GoogleLoginButton onClick={signInGoogle} />
       {/**
        * Twitter ログインを一時的に無効化
        * 以下のブロックを元に戻すと再び有効

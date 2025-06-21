@@ -7,13 +7,32 @@ import { createClient } from "../utils/supabaseBrowser";
 export default function TopNav() {
   const supabase = React.useMemo(() => createClient(), []);
   const [user, setUser] = useState(null);
+  const renderCount = React.useRef(0);
+  renderCount.current += 1;
+  if (typeof window !== "undefined") {
+    console.log(`[TopNav] render #${renderCount.current}`);
+  }
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+    let unsub: (() => void) | null = null;
+
+    // initial fetch
+    supabase.auth.getUser().then(({ data }) => {
+      setUser((prev) => (prev?.id === data.user?.id ? prev : data.user));
     });
-    return () => listener.subscription.unsubscribe();
+
+    // subscribe to subsequent changes
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      const nextUser = session?.user ?? null;
+      setUser((prev) => (prev?.id === nextUser?.id ? prev : nextUser));
+    });
+
+    unsub = () => listener.subscription.unsubscribe();
+
+    return () => {
+      // cleanup
+      unsub?.();
+    };
   }, [supabase]);
 
   return (
@@ -21,13 +40,15 @@ export default function TopNav() {
       <Link href="/" className="font-bold text-lg">電波人間カジノ統計</Link>
       <nav className="flex items-center gap-4">
         <Link href="/betting" className="hover:underline">Betting</Link>
-        <Link href="/dashboard" className="hover:underline">Dashboard</Link>
+        {user && (
+          <Link href="/dashboard" className="hover:underline">Dashboard</Link>
+        )}
         {user ? (
-          <Link href="/mypage" className="px-3 py-1 bg-gray-800 text-white rounded text-sm">
+          <Link href="/mypage" className="hover:underline">
             My Page
           </Link>
         ) : (
-          <Link href="/login" className="px-3 py-1 bg-blue-600 text-white rounded text-sm">
+          <Link href="/login" className="px-3 py-1 bg-gray-600 text-white rounded text-sm hover:bg-gray-700">
             ログイン
           </Link>
         )}
