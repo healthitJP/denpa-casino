@@ -36,6 +36,10 @@ https://denpa-casino-git-main-hawawapuddings-projects.vercel.app/api/auth/callba
    - 参考: [Google OAuth 2.0 Web apps](https://developers.google.com/identity/protocols/oauth2?hl=ja#web)
 3. 発行された **クライアント ID / クライアント シークレット** を控える
 4. Supabase ダッシュボード → Auth → **Google** タブを有効化し、ID / シークレットを貼り付けて保存
+```
+https://ckaytyqlmouzwqkzoozn.supabase.co/auth/v1/callback
+```
+これも追加
 
 ### よくあるエラー
 | エラー | 原因 | 解決策 |
