@@ -1,5 +1,5 @@
 /**
- * ケリー基準 (Full Kelly) の 1/4 倍を推奨掛け金として返す関数（純オッズ版）
+ * ケリー基準 (Full Kelly) の 1/4 倍を推奨賭け金として返す関数（純オッズ版）
  * @param winProb 勝率（0〜1の実数）
  * @param netOdds 純オッズ（例: 1.0 なら1倍の純利益。2.0倍配当なら純オッズは1.0）
  * @returns ケリー最適割合（0未満なら0、1超なら1にクリップ）
@@ -43,9 +43,9 @@ export function logGrowthRate(fraction: number, winProb: number, netOdds: number
 }
 
 /**
- * 掛け金の上限（maxBet）、所持財産（wealth）、勝率（winProb）、純オッズ（netOdds）を受け取り、
+ * 賭け金の上限（maxBet）、所持財産（wealth）、勝率（winProb）、純オッズ（netOdds）を受け取り、
  * 実際にかける割合（wealthに対する割合）を返す関数
- * @param maxBet 掛け金の上限（絶対額, 0以上）
+ * @param maxBet 賭け金の上限（絶対額, 0以上）
  * @param wealth 所持財産（絶対額, 0より大きい必要あり）
  * @param winProb 勝率（0〜1の実数）
  * @param netOdds 純オッズ（例: 1.0 なら1倍の純利益。2.0倍配当なら純オッズは1.0）
@@ -73,9 +73,9 @@ export function actualBetFraction(
 }
 
 /**
- * 掛け金の上限（maxBet）、所持財産（wealth）、勝率（winProb）、純オッズ（netOdds）を受け取り、
+ * 賭け金の上限（maxBet）、所持財産（wealth）、勝率（winProb）、純オッズ（netOdds）を受け取り、
  * 実際にかける割合での対数成長率（log growth rate）を返す関数
- * @param maxBet 掛け金の上限（絶対額, 0以上）
+ * @param maxBet 賭け金の上限（絶対額, 0以上）
  * @param wealth 所持財産（絶対額, 0より大きい必要あり）
  * @param winProb 勝率（0〜1の実数）
  * @param netOdds 純オッズ（例: 1.0 なら1倍の純利益。2.0倍配当なら純オッズは1.0）
@@ -95,7 +95,7 @@ export function actualLogGrowthRate(
 
 /**
  * 賭けの期待値（expected value）を返す関数
- * @param betAmount 掛け金（絶対額, 0以上）
+ * @param betAmount 賭け金（絶対額, 0以上）
  * @param winProb 勝率（0〜1の実数）
  * @param netOdds 純オッズ（例: 1.0 なら1倍の純利益。2.0倍配当なら純オッズは1.0）
  * @returns 期待値（betAmountあたりの期待収益, 実数）

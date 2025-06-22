@@ -91,7 +91,7 @@ export default function StatsGrid({ stats, results, netOddsInputs, setNetOddsInp
                                 className="border rounded px-2 py-1"
                             />
                         </label>
-                        <div className="text-sm">推奨掛け金: {hasData ? res!.betAmount.toFixed(2) : "-"}</div>
+                        <div className="text-sm">推奨賭け金: {hasData ? res!.betAmount.toFixed(2) : "-"}</div>
                         <div className="text-sm">対数成長率: {hasData ? res!.logGrowth.toFixed(4) : "-"}</div>
                         <div className="text-sm">期待利益: {hasData ? res!.expected.toFixed(2) : "-"}</div>
                         <div className="text-sm">悲観的期待利益: {hasData ? res!.pessimisticExpected.toFixed(2) : "-"}</div>
