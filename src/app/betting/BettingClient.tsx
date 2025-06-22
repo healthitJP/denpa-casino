@@ -281,14 +281,20 @@ export default function BettingClient({ initialCombos }: Props) {
             {/* selected combo display */}
             {statsLoading && <p>統計取得中...</p>}
             {selectedCombo && stats && (
-                <StatsGrid
-                    stats={stats}
-                    results={results}
-                    netOddsInputs={netOddsInputs}
-                    setNetOddsInputs={setNetOddsInputs}
-                    excludeDraws={excludeDraws}
-                    onReorder={handleReorder}
-                />
+                <>
+                    <StatsGrid
+                        stats={stats}
+                        results={results}
+                        netOddsInputs={netOddsInputs}
+                        setNetOddsInputs={setNetOddsInputs}
+                        excludeDraws={excludeDraws}
+                        onReorder={handleReorder}
+                    />
+                    <p className="text-xs text-gray-500 mt-2">
+                        上記のモンスターカードはドラッグで並べ替えでき、並び順も保存されます。
+                    </p>
+                </>
+
             )}
             {selectedCombo && !stats && !statsLoading && (
                 <p className="text-gray-800">この組み合わせの試合の記録はまだありません。</p>

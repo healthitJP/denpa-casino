@@ -85,6 +85,8 @@ export default function StatsGrid({ stats, results, netOddsInputs, setNetOddsInp
                                     copy[idx] = Number(e.target.value)
                                     setNetOddsInputs(copy)
                                 }}
+                                /* 入力時に DnD-Kit へイベントを渡さない */
+                                onPointerDown={(e) => e.stopPropagation()}
                                 className="border rounded px-2 py-1"
                             />
                         </label>
