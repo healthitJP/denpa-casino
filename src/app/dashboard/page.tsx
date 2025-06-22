@@ -46,7 +46,11 @@ export default function DashboardPage() {
       setError(error.message);
     } else {
       const body = resp as StatsResponseBody;
-      setData(body.combinations);
+      // モンスター数の少ない組から順に並べ替える
+      const sorted = [...body.combinations].sort(
+        (a, b) => a.monsters.length - b.monsters.length
+      );
+      setData(sorted);
     }
     setLoading(false);
   }

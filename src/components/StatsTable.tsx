@@ -19,7 +19,6 @@ export default function StatsTable({ data, excludeDraws = false, onSelectCombina
       <table className="w-full table-fixed text-sm" style={{ minWidth: `${maxMonsters * 120 + 200}px` }}>
         <thead>
           <tr className="border-b">
-            <th className="px-2 py-1 text-center">組ID</th>
             {Array.from({ length: maxMonsters }).map((_, idx) => (
               <React.Fragment key={idx}>
                 <th className="px-2 py-1 text-center">モンスター{idx + 1}</th>
@@ -37,7 +36,6 @@ export default function StatsTable({ data, excludeDraws = false, onSelectCombina
                 className="hover:bg-gray-50 cursor-pointer"
                 onClick={() => onSelectCombination?.(comb.combination_id)}
               >
-                <td className="px-2 py-1 font-mono text-center">{comb.combination_id}</td>
                 {Array.from({ length: maxMonsters }).map((_, idx) => {
                   const m = comb.monsters[idx];
                   if (m) {

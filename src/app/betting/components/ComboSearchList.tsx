@@ -14,17 +14,33 @@ interface Props {
 
 export default function ComboSearchList({ combos, selectedId, onSelect, searchText, setSearchText }: Props) {
   const filtered = React.useMemo(() => {
-    if (!searchText) return combos
-    // 分割: スペース・スラッシュ(／/)
+    // 検索キーワードが無ければ元データをそのまま返す
+    if (!searchText) return sortByMonsterCount(combos)
+
+    // キーワードをスペース・スラッシュ(／/)
+    // で分割し、前後の空白を除去した配列を生成
     const keywords = searchText
       .split(/[\s/／]+/)
       .map((s) => s.trim())
-      .filter((s) => s)
+      .filter(Boolean)
 
-    return combos.filter((c) =>
-      keywords.every((kw) => c.monsters.some((m) => m.name.includes(kw)))
+    // キーワードをすべて含むコンビネーションのみ抽出
+    const matched = combos.filter((combo) =>
+      keywords.every((kw) =>
+        combo.monsters.some((monster) => monster.name.includes(kw))
+      )
     )
+
+    return sortByMonsterCount(matched)
   }, [searchText, combos])
+
+  /**
+   * モンスター数の少ない順（2体→3体→4体 …）にソートするヘルパー。
+   * 元配列を破壊しないようにスプレッドでコピーしてから並び替える。
+   */
+  function sortByMonsterCount(list: Combo[]) {
+    return [...list].sort((a, b) => a.monsters.length - b.monsters.length)
+  }
 
   return (
     <div className="flex flex-col gap-2">
