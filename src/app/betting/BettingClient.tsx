@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { createClient } from "../../utils/supabaseBrowser";
 import { usePersistentGroupIds } from "../../hooks/usePersistentGroupIds";
 import StatSelector from "../../components/StatSelector";
@@ -11,6 +11,7 @@ import { useBettingResults } from "./hooks/useBettingResults";
 import TopProgressBar from "./components/TopProgressBar";
 import RecentRecords from "./components/RecentRecords";
 import { InlineMath } from "react-katex";
+import { arrayMove } from "@dnd-kit/sortable";
 
 interface Props {
     initialCombos: { id: number; monsters: any[] }[];
@@ -126,6 +127,23 @@ export default function BettingClient({ initialCombos }: Props) {
         fetchRecent();
     }, [selfId, supabase]);
 
+    // reorder handler for drag-and-drop
+    const handleReorder = useCallback(
+        (fromIdx: number, toIdx: number) => {
+            if (!stats) return;
+            setStats((prev) => {
+                if (!prev) return prev;
+                return {
+                    ...prev,
+                    monsters: arrayMove(prev.monsters, fromIdx, toIdx),
+                } as StatsCombination;
+            });
+
+            setNetOddsInputs((prev) => arrayMove(prev, fromIdx, toIdx));
+        },
+        [stats, selectedId]
+    );
+
     async function handleRecord() {
         setMessage(null);
         setIsSubmitting(true);
@@ -142,7 +160,14 @@ export default function BettingClient({ initialCombos }: Props) {
             return;
         }
 
-        const betDetails = results.map((r) => ({
+        // --- 並び順配列 ({0,1,2} など) を生成 -----------------
+        const monstersOrder = stats.monsters.map(
+            (s) => selectedCombo?.monsters.findIndex((m) => m.name === s.name) ?? -1
+        )
+
+        // bet_details にも order フィールドを含め、JSON 内での安全性を高める
+        const betDetails = results.map((r, idx) => ({
+            order: idx, // 0,1,2 ... ドラッグ後の表示順
             name: r.stat.name,
             netOdds: r.netOdds,
             betAmount: Number(r.betAmount.toFixed(2)),
@@ -163,6 +188,7 @@ export default function BettingClient({ initialCombos }: Props) {
             total_wealth: wealth,
             max_bet: maxBet,
             bet_details: betDetails,
+            monsters_order: monstersOrder,
         });
 
         if (error) {
@@ -261,6 +287,7 @@ export default function BettingClient({ initialCombos }: Props) {
                     netOddsInputs={netOddsInputs}
                     setNetOddsInputs={setNetOddsInputs}
                     excludeDraws={excludeDraws}
+                    onReorder={handleReorder}
                 />
             )}
             {selectedCombo && !stats && !statsLoading && (

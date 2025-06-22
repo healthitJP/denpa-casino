@@ -1,6 +1,19 @@
 import React from 'react'
+import {
+    DndContext,
+    closestCenter,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+    SortableContext,
+    horizontalListSortingStrategy,
+} from '@dnd-kit/sortable'
 import { BettingResult } from '../hooks/useBettingResults'
 import RainbowBorder from "../../../components/RainbowBorder"
+import SortableCard from "./SortableCard"
 
 interface Props {
     stats: any | null
@@ -8,9 +21,10 @@ interface Props {
     netOddsInputs: number[]
     setNetOddsInputs: (arr: number[]) => void
     excludeDraws: boolean
+    onReorder: (from: number, to: number) => void
 }
 
-export default function StatsGrid({ stats, results, netOddsInputs, setNetOddsInputs, excludeDraws }: Props) {
+export default function StatsGrid({ stats, results, netOddsInputs, setNetOddsInputs, excludeDraws, onReorder }: Props) {
     if (!stats) return null
 
     // Find the maximum log growth among the betting results (ignore undefined)
@@ -21,8 +35,31 @@ export default function StatsGrid({ stats, results, netOddsInputs, setNetOddsInp
         return values.length > 0 ? Math.max(...values) : -Infinity
     }, [results])
 
+    // DnD sensors
+    const sensors = useSensors(useSensor(PointerSensor))
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event
+        if (!over || active.id === over.id) return
+
+        const fromIdx = stats.monsters.findIndex((m: any) => m.name === active.id)
+        const toIdx = stats.monsters.findIndex((m: any) => m.name === over.id)
+        if (fromIdx !== -1 && toIdx !== -1) {
+            onReorder(fromIdx, toIdx)
+        }
+    }
+
     return (
-        <div className="flex flex-row gap-4 overflow-auto">
+        <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+        >
+            <SortableContext
+                items={stats.monsters.map((m: any) => m.name)}
+                strategy={horizontalListSortingStrategy}
+            >
+            <div className="flex flex-row gap-4 overflow-auto">
             {stats.monsters.map((stat: any, idx: number) => {
                 const res = results[idx]
                 const isHighlighted =
@@ -63,10 +100,16 @@ export default function StatsGrid({ stats, results, netOddsInputs, setNetOddsInp
                     </div>
                 )
 
-                return isHighlighted ? (
-                    <RainbowBorder key={stat.name}>{Card}</RainbowBorder>
+                const content = isHighlighted ? (
+                    <RainbowBorder>{Card}</RainbowBorder>
                 ) : (
-                    <React.Fragment key={stat.name}>{Card}</React.Fragment>
+                    Card
+                )
+
+                return (
+                    <SortableCard key={stat.name} id={stat.name}>
+                        {content}
+                    </SortableCard>
                 )
             })}
             {/* Draw rate card */}
@@ -79,6 +122,8 @@ export default function StatsGrid({ stats, results, netOddsInputs, setNetOddsInp
                     <div className="text-xs text-gray-500">引き分け数: {stats.draw_count} / {stats.total_matches}</div>
                 </div>
             )}
-        </div>
+            </div>
+            </SortableContext>
+        </DndContext>
     )
 } 
