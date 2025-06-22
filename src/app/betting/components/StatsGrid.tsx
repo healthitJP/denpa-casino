@@ -62,6 +62,7 @@ export default function StatsGrid({ stats, results, netOddsInputs, setNetOddsInp
             <div className="flex flex-row gap-4 overflow-auto">
             {stats.monsters.map((stat: any, idx: number) => {
                 const res = results[idx]
+                const hasData = res && res.netOdds > 0
                 const isHighlighted =
                     res && typeof res.logGrowth === "number" && res.logGrowth === maxLogGrowth
 
@@ -90,15 +91,11 @@ export default function StatsGrid({ stats, results, netOddsInputs, setNetOddsInp
                                 className="border rounded px-2 py-1"
                             />
                         </label>
-                        {res && res.netOdds > 0 && (
-                            <>
-                                <div className="text-sm">推奨掛け金: {res.betAmount.toFixed(2)}</div>
-                                <div className="text-sm">対数成長率: {res.logGrowth.toFixed(4)}</div>
-                                <div className="text-sm">期待利益: {res.expected.toFixed(2)}</div>
-                                <div className="text-sm">悲観的期待利益: {res.pessimisticExpected.toFixed(2)}</div>
-                                <div className="text-xs text-gray-500">勝率CI (95%): {(res.ci.lower * 100).toFixed(1)}% - {(res.ci.upper * 100).toFixed(1)}%</div>
-                            </>
-                        )}
+                        <div className="text-sm">推奨掛け金: {hasData ? res!.betAmount.toFixed(2) : "-"}</div>
+                        <div className="text-sm">対数成長率: {hasData ? res!.logGrowth.toFixed(4) : "-"}</div>
+                        <div className="text-sm">期待利益: {hasData ? res!.expected.toFixed(2) : "-"}</div>
+                        <div className="text-sm">悲観的期待利益: {hasData ? res!.pessimisticExpected.toFixed(2) : "-"}</div>
+                        <div className="text-xs text-gray-500">勝率CI (95%): {hasData ? `${(res!.ci.lower * 100).toFixed(1)}% - ${(res!.ci.upper * 100).toFixed(1)}%` : "-"}</div>
                     </div>
                 )
 
