@@ -71,7 +71,7 @@ export default function DashboardPage() {
       />
       <button
         onClick={fetchStats}
-        className="px-4 py-2 bg-gray-600 text-white rounded disabled:opacity-50"
+        className="px-4 py-2 bg-gray-600 text-white rounded disabled:opacity-50 hover:bg-gray-700 cursor-pointer"
         disabled={loading}
       >
         {loading ? "取得中..." : "統計取得"}
