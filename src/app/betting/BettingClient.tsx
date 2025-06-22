@@ -291,7 +291,7 @@ export default function BettingClient({ initialCombos }: Props) {
                         onReorder={handleReorder}
                     />
                     <p className="text-xs text-gray-500 mt-2">
-                        上記のモンスターカードはドラッグで並べ替えでき、並び順も保存されます。今後並び順ごとの勝率計算機能も追加予定です。
+                        上記のモンスターカードはドラッグで並べ替えでき、並び順も記録されます。今後並び順ごとの勝率計算機能も追加予定です。
                     </p>
                 </>
 
