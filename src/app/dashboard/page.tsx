@@ -5,6 +5,7 @@ import React from "react";
 import { createClient } from "../../utils/supabaseBrowser";
 import StatSelector from "../../components/StatSelector";
 import StatsTable from "../../components/StatsTable";
+import ParlayStats from "../../components/ParlayStats";
 import { StatsCombination, StatsResponseBody, StatsMode } from "../../types/stats";
 import { usePersistentGroupIds } from "../../hooks/usePersistentGroupIds";
 
@@ -77,7 +78,12 @@ export default function DashboardPage() {
         {loading ? "取得中..." : "統計取得"}
       </button>
       {error && <p className="text-red-600">{error}</p>}
-      {data.length > 0 && <StatsTable data={data} excludeDraws={excludeDraws} />}
+      {data.length > 0 && (
+        <>
+          <StatsTable data={data} excludeDraws={excludeDraws} />
+          <ParlayStats data={data} excludeDraws={excludeDraws} />
+        </>
+      )}
     </div>
   );
 } 
