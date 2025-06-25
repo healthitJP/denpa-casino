@@ -147,6 +147,8 @@ export default function ParlayStats({ data, excludeDraws }: Props) {
           </li>
           <li>
             <b>CVaR(5%)</b> … 最悪 5% ケースの平均倍率。<br />
+            5% 分位点が「ここまでは覚悟」とする閾値なのに対し、CVaR はその閾値を下回った<br />
+            シナリオだけを平均した "実質的な最悪平均" を示す。<br />
             0.8 未満: ハイリスク, 0.8–1.0: 注意, 1.0 以上: 許容。
           </li>
           <li>
