@@ -29,7 +29,8 @@ export default function ParlayStats({ data, excludeDraws }: Props) {
     let best = 0;
     comb.monsters.forEach((m) => {
       const winProb = total > 0 ? m.wins / total : 0;
-      const mult = winProb * m.avg_net_odds; // avg_net_odds は (1+b)
+      // avg_net_odds は "資産返還倍率 r" (例: 3 ⇒ 100→300) を直接保持
+      const mult = winProb * m.avg_net_odds;
       if (mult > best) best = mult;
     });
     return best;
@@ -47,11 +48,36 @@ export default function ParlayStats({ data, excludeDraws }: Props) {
 
   const probLoss = multipliers.filter((v) => v < 1).length / n;
 
+  // 追加: ログ成長率を基準に選んだ場合の期待倍率
+  function logGrowth(p:number,b:number){
+    const fullKelly=(p*b-(1-p))/b;
+    const quarterKelly=Math.max(0,Math.min(1,fullKelly*0.25));
+    if(quarterKelly===0) return -Infinity;
+    return p*Math.log(1+quarterKelly*b)+(1-p)*Math.log(1-quarterKelly);
+  }
+  const altMultipliers=data.map((comb)=>{
+      const total=comb.total_matches-(excludeDraws?comb.draw_count:0);
+      let bestMult=0;
+      let bestLog=-Infinity;
+      comb.monsters.forEach((m)=>{
+         const p=total>0?m.wins/total:0;
+         const b=m.avg_net_odds; // 利益倍率 (返還 r)
+         const g=logGrowth(p,b);
+         if(g>bestLog){
+            bestLog=g;
+            bestMult=p*b; // 期待倍率は p*r (r=b)
+         }
+      });
+      return bestMult;
+  });
+  const altMean=altMultipliers.reduce((s,v)=>s+v,0)/altMultipliers.length;
+
   return (
     <div className="space-y-6">
       <div className="p-4 border rounded bg-gray-50 dark:bg-gray-800 space-y-1">
         <h2 className="font-semibold mb-2">連荘 1 回のリスク指標</h2>
         <div>期待倍率 (平均)：<b>{mean.toFixed(3)} 倍</b></div>
+        <div>期待倍率 (ログ成長基準)：<b>{altMean.toFixed(3)} 倍</b></div>
         <div>標準偏差：{sd.toFixed(3)}</div>
         <div>変動係数 (CV)：{cv.toFixed(3)}</div>
         <div>5% 分位点：{p5.toFixed(3)} 倍</div>
@@ -64,7 +90,7 @@ export default function ParlayStats({ data, excludeDraws }: Props) {
           <li>
             <b>期待倍率</b> … 1 を超えればプラス期待値。<br />
             1.05 以上 = 許容、1.10 以上 = 魅力的、1.20 以上 = 非常に好条件。<br />
-            <InlineMath math={"E[m] = \\frac{1}{N} \\sum_{c=1}^{N} p_c \\,(1 + b_c)"} />
+            <InlineMath math={"E[m] = \\frac{1}{N} \\sum_{c=1}^{N} p_c \\, r_c"} />
           </li>
           <li>
             <b>標準偏差 / CV</b> … 値が小さいほど結果が安定。<br />
