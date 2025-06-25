@@ -42,13 +42,36 @@ export default function ParlayStats({ data, excludeDraws }: Props) {
   const sd = Math.sqrt(variance);
   const cv = sd / mean;
 
-  // 5% 分位点
-  const sorted = [...multipliers].sort((a, b) => a - b);
-  const p5 = sorted[Math.floor(0.05 * n)];
+  // percentile helper
+  function percentile(arr: number[], p: number) {
+    const sorted = [...arr].sort((a, b) => a - b);
+    const idx = (arr.length - 1) * p;
+    const lo = Math.floor(idx);
+    const hi = Math.ceil(idx);
+    if (lo === hi) return sorted[lo];
+    return sorted[lo] * (hi - idx) + sorted[hi] * (idx - lo);
+  }
+
+  const median = percentile(multipliers, 0.5);
+  const p25 = percentile(multipliers, 0.25);
+  const p75 = percentile(multipliers, 0.75);
+  const iqr = p75 - p25;
+  const p5 = percentile(multipliers, 0.05);
+  const p95 = percentile(multipliers, 0.95);
+
+  // CVaR 5% (平均下位5%)
+  const tail = multipliers.filter((v) => v <= p5);
+  const cvar5 = tail.reduce((s, v) => s + v, 0) / tail.length;
+
+  // skewness & kurtosis (sample)
+  const m3 = multipliers.reduce((s, v) => s + (v - mean) ** 3, 0) / n;
+  const m4 = multipliers.reduce((s, v) => s + (v - mean) ** 4, 0) / n;
+  const skewness = sd > 0 ? m3 / sd ** 3 : 0;
+  const kurtosis = sd > 0 ? m4 / sd ** 4 - 3 : 0; // excess kurtosis
 
   const probLoss = multipliers.filter((v) => v < 1).length / n;
 
-  // 追加: ログ成長率を基準に選んだ場合の期待倍率
+  // 追加: 対数成長率を基準に選んだ場合の期待倍率
   function logGrowth(p:number,b:number){
     const fullKelly=(p*b-(1-p))/b;
     const quarterKelly=Math.max(0,Math.min(1,fullKelly*0.25));
@@ -56,31 +79,53 @@ export default function ParlayStats({ data, excludeDraws }: Props) {
     return p*Math.log(1+quarterKelly*b)+(1-p)*Math.log(1-quarterKelly);
   }
   const altMultipliers=data.map((comb)=>{
-      const total=comb.total_matches-(excludeDraws?comb.draw_count:0);
-      let bestMult=0;
-      let bestLog=-Infinity;
-      comb.monsters.forEach((m)=>{
-         const p=total>0?m.wins/total:0;
-         const b=m.avg_net_odds; // 利益倍率 (返還 r)
-         const g=logGrowth(p,b);
-         if(g>bestLog){
-            bestLog=g;
-            bestMult=p*b; // 期待倍率は p*r (r=b)
-         }
-      });
-      return bestMult;
-  });
+       const total=comb.total_matches-(excludeDraws?comb.draw_count:0);
+       let bestMult=0;
+       let bestLog=-Infinity;
+       comb.monsters.forEach((m)=>{
+          const p=total>0?m.wins/total:0;
+          const b=m.avg_net_odds; // 利益倍率 (返還 r)
+          const g=logGrowth(p,b);
+          if(g>bestLog){
+             bestLog=g;
+             bestMult=p*b; // 期待倍率は p*r (r=b)
+          }
+       });
+       return bestMult;
+   });
   const altMean=altMultipliers.reduce((s,v)=>s+v,0)/altMultipliers.length;
+
+  // log growth stats
+  const logList = data.map((comb)=>{
+       const total=comb.total_matches-(excludeDraws?comb.draw_count:0);
+       let bestLog=-Infinity;
+       comb.monsters.forEach((m)=>{
+          const p=total>0?m.wins/total:0;
+          const r=m.avg_net_odds;
+          const g=logGrowth(p,r);
+          if(g>bestLog) bestLog=g;
+       });
+       return bestLog;
+   });
+  const meanLog = logList.reduce((s,v)=>s+v,0)/logList.length;
+  const sdLog = Math.sqrt(logList.reduce((s,v)=>s+(v-meanLog)**2,0)/logList.length);
 
   return (
     <div className="space-y-6">
       <div className="p-4 border rounded bg-gray-50 dark:bg-gray-800 space-y-1">
         <h2 className="font-semibold mb-2">連荘 1 回のリスク指標</h2>
         <div>期待倍率 (平均)：<b>{mean.toFixed(3)} 倍</b></div>
-        <div>期待倍率 (ログ成長基準)：<b>{altMean.toFixed(3)} 倍</b></div>
-        <div>標準偏差：{sd.toFixed(3)}</div>
-        <div>変動係数 (CV)：{cv.toFixed(3)}</div>
+        <div>中央値：{median.toFixed(3)} 倍</div>
         <div>5% 分位点：{p5.toFixed(3)} 倍</div>
+        <div>CVaR(5%)：{cvar5.toFixed(3)} 倍</div>
+        <div>標準偏差：{sd.toFixed(3)}</div>
+        <div>変動係数(CV)：{cv.toFixed(3)}</div>
+        <div>IQR (25–75%)：{iqr.toFixed(3)}</div>
+        <div>期待倍率 (対数成長率基準)：{altMean.toFixed(3)} 倍</div>
+        <div>歪度：{skewness.toFixed(2)}</div>
+        <div>尖度：{kurtosis.toFixed(2)}</div>
+        <div>対数成長率 平均：{meanLog.toFixed(4)}</div>
+        <div>対数成長率 SD：{sdLog.toFixed(4)}</div>
         <div>損失確率 P(m &lt; 1)：{(probLoss * 100).toFixed(1)}%</div>
       </div>
 
@@ -93,15 +138,39 @@ export default function ParlayStats({ data, excludeDraws }: Props) {
             <InlineMath math={"E[m] = \\frac{1}{N} \\sum_{c=1}^{N} p_c \\, r_c"} />
           </li>
           <li>
+            <b>中央値</b> … 「半分の試合でこれ以上」は勝てる基準。<br/>
+            1 未満: 元割れ優勢／避けたい, 1–1.05: やや有利, 1.05 以上: 良好。
+          </li>
+          <li>
+            <b>5% 分位点</b> … 下位 5% での倍率。<br />
+            ここを下回ることは 20 試合に 1 回程度。リスク下限の目安。
+          </li>
+          <li>
+            <b>CVaR(5%)</b> … 最悪 5% ケースの平均倍率。<br />
+            0.8 未満: ハイリスク, 0.8–1.0: 注意, 1.0 以上: 許容。
+          </li>
+          <li>
             <b>標準偏差 / CV</b> … 値が小さいほど結果が安定。<br />
             <InlineMath math={"\\sigma = \\sqrt{E[(m-\\mu)^2]}"} />,
             <InlineMath math={"CV = \\sigma / \\mu"} />。<br />
             CV &lt; 0.2 は低リスク、0.2〜0.4 は中リスク、0.4 以上は高リスク。
           </li>
           <li>
-            <b>5% 分位点</b> … 95% 信頼で下回らない倍率。<br />
-            サンプルを昇順に並べた 5% 位置の値。<br />
-            1 未満の場合は「最悪ケースで元割れ」リスクが高い。
+            <b>IQR</b> … 50% の中央レンジ幅。外れ値の影響を受けにくい散らばり指標。
+            IQR &lt; 0.5: 安定, 0.5–1.5: 普通, &gt;1.5: ばらつき大。
+          </li>
+          <li>
+            <b>期待倍率 (対数成長率基準)</b> … 対数成長率最大モンスターでの平均倍率。
+          </li>
+          <li>
+            <b>歪度・尖度</b> … 分布の非対称性と裾の重さを数値化。0 に近いほど正規分布に近い。
+            <br />
+            歪度 |&gt; 1 または &lt; -1: 強い非対称性。尖度 &gt; 3: 裾が重い。
+          </li>
+          <li>
+            <b>対数成長率の平均/SD</b> … 長期的な対数資産成長の安定性を示す。
+            <br />
+            平均 g &gt; 0.01: 許容, &gt;0.05: 魅力的。SD が |g| の 2 倍以上だとブレが大きい。
           </li>
           <li>
             <b>損失確率</b> … 連荘しても資金が減る確率。<br />
