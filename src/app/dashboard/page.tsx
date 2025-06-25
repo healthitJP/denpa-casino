@@ -80,8 +80,8 @@ export default function DashboardPage() {
       {error && <p className="text-red-600">{error}</p>}
       {data.length > 0 && (
         <>
-          <StatsTable data={data} excludeDraws={excludeDraws} />
           <ParlayStats data={data} excludeDraws={excludeDraws} />
+          <StatsTable data={data} excludeDraws={excludeDraws} />
         </>
       )}
     </div>
