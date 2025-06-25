@@ -1,10 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useImperativeHandle, forwardRef } from "react";
 import { InlineMath } from "react-katex";
-import { StatsCombination } from "../types/stats";
+import { StatsCombination, StatsMonster } from "../types/stats";
 
-interface Props {
+interface ParlayStatsProps {
   data: StatsCombination[];
   excludeDraws: boolean;
 }
@@ -20,14 +20,17 @@ interface Props {
  * 5. 5% 分位点 (パーセンタイル) → ワーストケースの目安
  * 6. 損失確率 P(m < 1)
  */
-export default function ParlayStats({ data, excludeDraws }: Props) {
+const ParlayStats = forwardRef(function ParlayStats(
+  { data, excludeDraws }: ParlayStatsProps,
+  ref: React.Ref<any>
+) {
   if (data.length === 0) return null;
 
   // 1. 各組み合わせの最高期待倍率
-  const multipliers = data.map((comb) => {
+  const multipliers = data.map((comb: StatsCombination) => {
     const total = comb.total_matches - (excludeDraws ? comb.draw_count : 0);
     let best = 0;
-    comb.monsters.forEach((m) => {
+    comb.monsters.forEach((m: StatsMonster) => {
       const winProb = total > 0 ? m.wins / total : 0;
       // avg_net_odds は "資産返還倍率 r" (例: 3 ⇒ 100→300) を直接保持
       const mult = winProb * m.avg_net_odds;
@@ -37,8 +40,8 @@ export default function ParlayStats({ data, excludeDraws }: Props) {
   });
 
   const n = multipliers.length;
-  const mean = multipliers.reduce((s, v) => s + v, 0) / n;
-  const variance = multipliers.reduce((s, v) => s + (v - mean) ** 2, 0) / n;
+  const mean = multipliers.reduce((s: number, v: number) => s + v, 0) / n;
+  const variance = multipliers.reduce((s: number, v: number) => s + (v - mean) ** 2, 0) / n;
   const sd = Math.sqrt(variance);
   const cv = sd / mean;
 
@@ -60,55 +63,62 @@ export default function ParlayStats({ data, excludeDraws }: Props) {
   const p95 = percentile(multipliers, 0.95);
 
   // CVaR 5% (平均下位5%)
-  const tail = multipliers.filter((v) => v <= p5);
-  const cvar5 = tail.reduce((s, v) => s + v, 0) / tail.length;
+  const tail = multipliers.filter((v: number) => v <= p5);
+  const cvar5 = tail.reduce((s: number, v: number) => s + v, 0) / tail.length;
 
   // skewness & kurtosis (sample)
-  const m3 = multipliers.reduce((s, v) => s + (v - mean) ** 3, 0) / n;
-  const m4 = multipliers.reduce((s, v) => s + (v - mean) ** 4, 0) / n;
+  const m3 = multipliers.reduce((s: number, v: number) => s + (v - mean) ** 3, 0) / n;
+  const m4 = multipliers.reduce((s: number, v: number) => s + (v - mean) ** 4, 0) / n;
   const skewness = sd > 0 ? m3 / sd ** 3 : 0;
   const kurtosis = sd > 0 ? m4 / sd ** 4 - 3 : 0; // excess kurtosis
 
-  const probLoss = multipliers.filter((v) => v < 1).length / n;
+  const probLoss = multipliers.filter((v: number) => v < 1).length / n;
 
   // 追加: 対数成長率を基準に選んだ場合の期待倍率
-  function logGrowth(p:number,b:number){
-    const fullKelly=(p*b-(1-p))/b;
-    const quarterKelly=Math.max(0,Math.min(1,fullKelly*0.25));
-    if(quarterKelly===0) return -Infinity;
-    return p*Math.log(1+quarterKelly*b)+(1-p)*Math.log(1-quarterKelly);
+  function logGrowth(p: number, b: number) {
+    const fullKelly = (p * b - (1 - p)) / b;
+    const quarterKelly = Math.max(0, Math.min(1, fullKelly * 0.25));
+    if (quarterKelly === 0) return -Infinity;
+    return p * Math.log(1 + quarterKelly * b) + (1 - p) * Math.log(1 - quarterKelly);
   }
-  const altMultipliers=data.map((comb)=>{
-       const total=comb.total_matches-(excludeDraws?comb.draw_count:0);
-       let bestMult=0;
-       let bestLog=-Infinity;
-       comb.monsters.forEach((m)=>{
-          const p=total>0?m.wins/total:0;
-          const b=m.avg_net_odds; // 利益倍率 (返還 r)
-          const g=logGrowth(p,b);
-          if(g>bestLog){
-             bestLog=g;
-             bestMult=p*b; // 期待倍率は p*r (r=b)
-          }
-       });
-       return bestMult;
-   });
-  const altMean=altMultipliers.reduce((s,v)=>s+v,0)/altMultipliers.length;
+  const altMultipliers = data.map((comb: StatsCombination) => {
+    const total = comb.total_matches - (excludeDraws ? comb.draw_count : 0);
+    let bestMult = 0;
+    let bestLog = -Infinity;
+    comb.monsters.forEach((m: StatsMonster) => {
+      const p = total > 0 ? m.wins / total : 0;
+      const b = m.avg_net_odds; // 利益倍率 (返還 r)
+      const g = logGrowth(p, b);
+      if (g > bestLog) {
+        bestLog = g;
+        bestMult = p * b; // 期待倍率は p*r (r=b)
+      }
+    });
+    return bestMult;
+  });
+  const altMean = altMultipliers.reduce((s: number, v: number) => s + v, 0) / altMultipliers.length;
 
   // log growth stats
-  const logList = data.map((comb)=>{
-       const total=comb.total_matches-(excludeDraws?comb.draw_count:0);
-       let bestLog=-Infinity;
-       comb.monsters.forEach((m)=>{
-          const p=total>0?m.wins/total:0;
-          const r=m.avg_net_odds;
-          const g=logGrowth(p,r);
-          if(g>bestLog) bestLog=g;
-       });
-       return bestLog;
-   });
-  const meanLog = logList.reduce((s,v)=>s+v,0)/logList.length;
-  const sdLog = Math.sqrt(logList.reduce((s,v)=>s+(v-meanLog)**2,0)/logList.length);
+  const logList = data.map((comb: StatsCombination) => {
+    const total = comb.total_matches - (excludeDraws ? comb.draw_count : 0);
+    let bestLog = -Infinity;
+    comb.monsters.forEach((m: StatsMonster) => {
+      const p = total > 0 ? m.wins / total : 0;
+      const r = m.avg_net_odds;
+      const g = logGrowth(p, r);
+      if (g > bestLog) bestLog = g;
+    });
+    return bestLog;
+  });
+  const meanLog = logList.reduce((s: number, v: number) => s + v, 0) / logList.length;
+  const sdLog = Math.sqrt(logList.reduce((s: number, v: number) => s + (v - meanLog) ** 2, 0) / logList.length);
+
+  useImperativeHandle(ref, () => ({
+    mean,
+    probLoss,
+    cvar5,
+    median
+  }), [mean, probLoss, cvar5, median]);
 
   return (
     <div className="space-y-6">
@@ -183,4 +193,6 @@ export default function ParlayStats({ data, excludeDraws }: Props) {
       </div>
     </div>
   );
-} 
+});
+
+export default ParlayStats; 
