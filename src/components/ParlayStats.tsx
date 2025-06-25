@@ -36,9 +36,18 @@ export default function ParlayStats({ data, excludeDraws }: Props) {
     return best;
   });
 
-  const n = multipliers.length;
-  const mean = multipliers.reduce((s, v) => s + v, 0) / n;
-  const variance = multipliers.reduce((s, v) => s + (v - mean) ** 2, 0) / n;
+  // --- 1-a. 外れ値 (最大値と最小値) を 1 件ずつ除外した配列を作成 ---
+  function trimExtremes(arr: number[]) {
+    if (arr.length <= 2) return [...arr];
+    const sorted = [...arr].sort((a, b) => a - b);
+    return sorted.slice(1, -1); // 最小と最大を除外
+  }
+
+  const baseMultipliers = trimExtremes(multipliers);
+  const n = baseMultipliers.length;
+
+  const mean = baseMultipliers.reduce((s, v) => s + v, 0) / n;
+  const variance = baseMultipliers.reduce((s, v) => s + (v - mean) ** 2, 0) / n;
   const sd = Math.sqrt(variance);
   const cv = sd / mean;
 
@@ -52,24 +61,24 @@ export default function ParlayStats({ data, excludeDraws }: Props) {
     return sorted[lo] * (hi - idx) + sorted[hi] * (idx - lo);
   }
 
-  const median = percentile(multipliers, 0.5);
-  const p25 = percentile(multipliers, 0.25);
-  const p75 = percentile(multipliers, 0.75);
+  const median = percentile(baseMultipliers, 0.5);
+  const p25 = percentile(baseMultipliers, 0.25);
+  const p75 = percentile(baseMultipliers, 0.75);
   const iqr = p75 - p25;
-  const p5 = percentile(multipliers, 0.05);
-  const p95 = percentile(multipliers, 0.95);
+  const p5 = percentile(baseMultipliers, 0.05);
+  const p95 = percentile(baseMultipliers, 0.95);
 
   // CVaR 5% (平均下位5%)
-  const tail = multipliers.filter((v) => v <= p5);
+  const tail = baseMultipliers.filter((v) => v <= p5);
   const cvar5 = tail.reduce((s, v) => s + v, 0) / tail.length;
 
   // skewness & kurtosis (sample)
-  const m3 = multipliers.reduce((s, v) => s + (v - mean) ** 3, 0) / n;
-  const m4 = multipliers.reduce((s, v) => s + (v - mean) ** 4, 0) / n;
+  const m3 = baseMultipliers.reduce((s, v) => s + (v - mean) ** 3, 0) / n;
+  const m4 = baseMultipliers.reduce((s, v) => s + (v - mean) ** 4, 0) / n;
   const skewness = sd > 0 ? m3 / sd ** 3 : 0;
   const kurtosis = sd > 0 ? m4 / sd ** 4 - 3 : 0; // excess kurtosis
 
-  const probLoss = multipliers.filter((v) => v < 1).length / n;
+  const probLoss = baseMultipliers.filter((v) => v < 1).length / n;
 
   // 追加: 対数成長率を基準に選んだ場合の期待倍率
   function logGrowth(p:number,b:number){
@@ -93,7 +102,8 @@ export default function ParlayStats({ data, excludeDraws }: Props) {
        });
        return bestMult;
    });
-  const altMean=altMultipliers.reduce((s,v)=>s+v,0)/altMultipliers.length;
+  const altTrim=trimExtremes(altMultipliers);
+  const altMean=altTrim.reduce((s,v)=>s+v,0)/altTrim.length;
 
   // log growth stats
   const logList = data.map((comb)=>{
@@ -107,8 +117,9 @@ export default function ParlayStats({ data, excludeDraws }: Props) {
        });
        return bestLog;
    });
-  const meanLog = logList.reduce((s,v)=>s+v,0)/logList.length;
-  const sdLog = Math.sqrt(logList.reduce((s,v)=>s+(v-meanLog)**2,0)/logList.length);
+  const trimmedLog=trimExtremes(logList);
+  const meanLog = trimmedLog.reduce((s,v)=>s+v,0)/trimmedLog.length;
+  const sdLog = Math.sqrt(trimmedLog.reduce((s,v)=>s+(v-meanLog)**2,0)/trimmedLog.length);
 
   return (
     <div className="space-y-6">
@@ -132,6 +143,10 @@ export default function ParlayStats({ data, excludeDraws }: Props) {
       <div className="p-4 border rounded bg-gray-50 dark:bg-gray-800 dark:text-gray-200 text-sm leading-6">
         <h3 className="font-semibold mb-2">指標の読み方と目安</h3>
         <ul className="list-disc ml-5 space-y-1">
+          <li className="text-red-600 dark:text-red-400">
+            <b>※統計量の計算方法</b> … 外れ値対策として <b>最大値と最小値をそれぞれ 1 件ずつ除外</b> した後に
+            期待倍率や分位点などを計算しています。
+          </li>
           <li>
             <b>期待倍率</b> … 1 を超えればプラス期待値。<br />
             1.05 以上 = 許容、1.10 以上 = 魅力的、1.20 以上 = 非常に好条件。<br />
