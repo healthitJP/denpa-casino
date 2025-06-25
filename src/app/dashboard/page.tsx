@@ -1,12 +1,11 @@
 // @ts-nocheck
 "use client";
 
-import React, { useRef } from "react";
+import React from "react";
 import { createClient } from "../../utils/supabaseBrowser";
 import StatSelector from "../../components/StatSelector";
 import StatsTable from "../../components/StatsTable";
 import ParlayStats from "../../components/ParlayStats";
-import ParlayDecision from "../../components/parlayDecision";
 import { StatsCombination, StatsResponseBody, StatsMode } from "../../types/stats";
 import { usePersistentGroupIds } from "../../hooks/usePersistentGroupIds";
 
@@ -20,7 +19,6 @@ export default function DashboardPage() {
   const [data, setData] = React.useState<StatsCombination[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const statsRef = useRef<any>(null);
 
   // fetch self uid once
   React.useEffect(() => {
@@ -82,14 +80,8 @@ export default function DashboardPage() {
       {error && <p className="text-red-600">{error}</p>}
       {data.length > 0 && (
         <>
+          <ParlayStats data={data} excludeDraws={excludeDraws} />
           <StatsTable data={data} excludeDraws={excludeDraws} />
-          <ParlayStats ref={statsRef} data={data} excludeDraws={excludeDraws} />
-          <ParlayDecision
-            mean={statsRef.current?.mean ?? 1}
-            probLoss={statsRef.current?.probLoss ?? 0}
-            cvar5={statsRef.current?.cvar5 ?? 1}
-            median={statsRef.current?.median ?? 1}
-          />
         </>
       )}
     </div>
