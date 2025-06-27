@@ -36,13 +36,22 @@ export function useBettingResults(
       const winProb = totalMatches > 0 ? stat.wins / totalMatches : 0
       // ユーザー入力は「配当倍率」(勝てば X 倍で戻る) とする。
       // 計算には純オッズ (利益倍率) が必要なので X-1 に変換。
+      const EPS = 1e-6 // ゼロ入力を極小の正に変換して計算を継続
       const grossInput = netOddsInputs[idx]
-      const netOddsSource =
-        grossInput !== undefined && !isNaN(grossInput) && grossInput > 0
-          ? grossInput
-          : stat.avg_net_odds ?? 0 // どちらも gross odds が入ってくる想定
 
-      const netOdds = netOddsSource > 0 ? netOddsSource - 1 : 0
+      let grossOdds: number
+
+      if (grossInput !== undefined && !isNaN(grossInput)) {
+        if (grossInput > 0) {
+          grossOdds = grossInput
+        } else { // 0 以下は極小値として扱う
+          grossOdds = 1 + EPS // 配当倍率 (1+ε) → 純オッズは ε
+        }
+      } else {
+        grossOdds = stat.avg_net_odds ?? 1 + EPS // fallback: API 値 (gross) あるいは 1+ε
+      }
+
+      const netOdds = grossOdds - 1 // 純利益倍率
       if (!(wealth > 0) || !(netOdds > 0)) {
         return {
           stat,
