@@ -110,7 +110,7 @@ export default function DashboardPage() {
         <>
           <ParlayStats data={sortedData} excludeDraws={excludeDraws} />
           {/* Sort order selector */}
-          <div>
+          <div className="flex justify-end">
             <label className="mr-2 font-medium">並び替え:</label>
             <select
               value={sortBy}
