@@ -14,7 +14,7 @@ export default function DashboardPage() {
   const supabase = React.useMemo(() => createClient(), []);
   const [mode, setMode] = React.useState<StatsMode>("self");
   const [includeDefault, setIncludeDefault] = React.useState(true);
-  const [excludeDraws, setExcludeDraws] = React.useState(false);
+  const [excludeDraws, setExcludeDraws] = React.useState(true);
   const [selfId, setSelfId] = React.useState<string>("");
   const [groupIds, setGroupIds] = usePersistentGroupIds(selfId);
   const [data, setData] = React.useState<StatsCombination[]>([]);
@@ -67,9 +67,10 @@ export default function DashboardPage() {
       // actually sort by max log growth rate
       return [...data].sort((a, b) => {
         function maxLg(comb: StatsCombination): number {
+          const effectiveTotal = excludeDraws ? comb.total_matches - comb.draw_count : comb.total_matches;
           let max = -Infinity;
           comb.monsters.forEach((m) => {
-            const winProb = m.win_rate;
+            const winProb = effectiveTotal > 0 ? m.wins / effectiveTotal : 0;
             const netOdds = m.avg_net_odds - 1;
             if (netOdds <= 0 || winProb <= 0) return;
             const frac = kellyFraction(winProb, netOdds);
@@ -82,7 +83,7 @@ export default function DashboardPage() {
       });
     }
     return data;
-  }, [data, sortBy]);
+  }, [data, sortBy, excludeDraws]);
 
   return (
     <div className="max-w-5xl mx-auto p-4 space-y-6">

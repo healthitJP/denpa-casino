@@ -26,7 +26,7 @@ export default function BettingClient({ initialCombos }: Props) {
     // Default to 'all' stats when not logged in. If user logs in, we'll switch to 'self'.
     const [mode, setMode] = useState<StatsMode>("all");
     const [includeDefault, setIncludeDefault] = useState(true);
-    const [excludeDraws, setExcludeDraws] = useState(false);
+    const [excludeDraws, setExcludeDraws] = useState(true);
     const [selfId, setSelfId] = useState<string>("");
 
     // Selected combination id

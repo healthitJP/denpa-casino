@@ -69,8 +69,9 @@ export default function StatsTable({ data, excludeDraws = false, onSelectCombina
                 )}
                 {(() => {
                   let maxLg = -Infinity;
+                  const effectiveTotal = excludeDraws ? comb.total_matches - comb.draw_count : comb.total_matches;
                   comb.monsters.forEach((m) => {
-                    const winProb = m.win_rate;
+                    const winProb = effectiveTotal > 0 ? m.wins / effectiveTotal : 0;
                     const netOdds = m.avg_net_odds - 1; // 純オッズ
                     if (netOdds <= 0 || winProb <= 0) return;
                     const frac = kellyFraction(winProb, netOdds);
