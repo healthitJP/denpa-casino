@@ -34,7 +34,15 @@ export function useBettingResults(
 
     return stats.monsters.map((stat, idx) => {
       const winProb = totalMatches > 0 ? stat.wins / totalMatches : 0
-      const netOdds = netOddsInputs[idx] ?? stat.avg_net_odds ?? 0
+      // ユーザー入力は「配当倍率」(勝てば X 倍で戻る) とする。
+      // 計算には純オッズ (利益倍率) が必要なので X-1 に変換。
+      const grossInput = netOddsInputs[idx]
+      const netOddsSource =
+        grossInput !== undefined && !isNaN(grossInput) && grossInput > 0
+          ? grossInput
+          : stat.avg_net_odds ?? 0 // どちらも gross odds が入ってくる想定
+
+      const netOdds = netOddsSource > 0 ? netOddsSource - 1 : 0
       if (!(wealth > 0) || !(netOdds > 0)) {
         return {
           stat,

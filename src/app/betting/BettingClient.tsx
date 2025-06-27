@@ -87,7 +87,9 @@ export default function BettingClient({ initialCombos }: Props) {
                     setStats(comb);
                     if (comb) {
                         // set default netOdds inputs
-                        setNetOddsInputs(comb.monsters.map((m) => Number(m.avg_net_odds.toFixed(2))));
+                        setNetOddsInputs(
+                            comb.monsters.map((m) => Number(m.avg_net_odds.toFixed(2)))
+                        );
                     }
                 }
                 setStatsLoading(false);

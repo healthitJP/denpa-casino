@@ -76,7 +76,7 @@ export default function StatsGrid({ stats, results, netOddsInputs, setNetOddsInp
                         <div className="text-sm text-gray-600 dark:text-gray-300">勝率: {(res?.winProb * 100).toFixed(1)}%</div>
                         <div className="text-xs text-gray-500">勝利数: {stat.wins} / {stats.total_matches}</div>
                         <label className="text-sm flex flex-col gap-1">
-                            純オッズ（倍率）:
+                            配当倍率 (勝てば戻る倍率):
                             <input
                                 type="number"
                                 step="0.01"
