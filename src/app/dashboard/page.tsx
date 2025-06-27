@@ -106,21 +106,21 @@ export default function DashboardPage() {
         {loading ? "取得中..." : "統計取得"}
       </button>
       {error && <p className="text-red-600">{error}</p>}
-      {/* Sort order selector */}
-      <div>
-        <label className="mr-2 font-medium">並び替え:</label>
-        <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value as any)}
-          className="px-2 py-1 border rounded"
-        >
-          <option value="default">デフォルト</option>
-          <option value="maxScore">最大対数成長率順</option>
-        </select>
-      </div>
       {sortedData.length > 0 && (
         <>
           <ParlayStats data={sortedData} excludeDraws={excludeDraws} />
+          {/* Sort order selector */}
+          <div>
+            <label className="mr-2 font-medium">並び替え:</label>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="px-2 py-1 border rounded"
+            >
+              <option value="default">デフォルト</option>
+              <option value="maxScore">最大対数成長率順</option>
+            </select>
+          </div>
           <StatsTable data={sortedData} excludeDraws={excludeDraws} />
         </>
       )}
