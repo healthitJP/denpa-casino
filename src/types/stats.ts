@@ -11,7 +11,7 @@ export interface StatsMonster {
   name: string;
   wins: number;
   win_rate: number; // 0-1
-  avg_net_odds: number;
+  avg_net_odds: number; //実際にはかけ金を含めた払い戻し倍率
   score: number;
 }
 

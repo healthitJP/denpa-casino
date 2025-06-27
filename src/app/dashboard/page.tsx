@@ -8,6 +8,7 @@ import StatsTable from "../../components/StatsTable";
 import ParlayStats from "../../components/ParlayStats";
 import { StatsCombination, StatsResponseBody, StatsMode } from "../../types/stats";
 import { usePersistentGroupIds } from "../../hooks/usePersistentGroupIds";
+import { kellyFraction, logGrowthRate } from "../../utils/math";
 
 export default function DashboardPage() {
   const supabase = React.useMemo(() => createClient(), []);
@@ -19,6 +20,7 @@ export default function DashboardPage() {
   const [data, setData] = React.useState<StatsCombination[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [sortBy, setSortBy] = React.useState<"default" | "maxScore">("default");
 
   // fetch self uid once
   React.useEffect(() => {
@@ -56,6 +58,32 @@ export default function DashboardPage() {
     setLoading(false);
   }
 
+  // sorted data based on sortBy
+  const sortedData = React.useMemo(() => {
+    if (sortBy === "default") {
+      return data;
+    }
+    if (sortBy === "maxScore") {
+      // actually sort by max log growth rate
+      return [...data].sort((a, b) => {
+        function maxLg(comb: StatsCombination): number {
+          let max = -Infinity;
+          comb.monsters.forEach((m) => {
+            const winProb = m.win_rate;
+            const netOdds = m.avg_net_odds - 1;
+            if (netOdds <= 0 || winProb <= 0) return;
+            const frac = kellyFraction(winProb, netOdds);
+            const lg = logGrowthRate(frac, winProb, netOdds);
+            if (lg > max) max = lg;
+          });
+          return max === -Infinity ? 0 : max;
+        }
+        return maxLg(b) - maxLg(a);
+      });
+    }
+    return data;
+  }, [data, sortBy]);
+
   return (
     <div className="max-w-5xl mx-auto p-4 space-y-6">
       <h1 className="text-2xl font-bold">ダッシュボード</h1>
@@ -78,10 +106,22 @@ export default function DashboardPage() {
         {loading ? "取得中..." : "統計取得"}
       </button>
       {error && <p className="text-red-600">{error}</p>}
-      {data.length > 0 && (
+      {/* Sort order selector */}
+      <div>
+        <label className="mr-2 font-medium">並び替え:</label>
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value as any)}
+          className="px-2 py-1 border rounded"
+        >
+          <option value="default">デフォルト</option>
+          <option value="maxScore">最大対数成長率順</option>
+        </select>
+      </div>
+      {sortedData.length > 0 && (
         <>
-          <ParlayStats data={data} excludeDraws={excludeDraws} />
-          <StatsTable data={data} excludeDraws={excludeDraws} />
+          <ParlayStats data={sortedData} excludeDraws={excludeDraws} />
+          <StatsTable data={sortedData} excludeDraws={excludeDraws} />
         </>
       )}
     </div>

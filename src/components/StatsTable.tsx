@@ -3,6 +3,7 @@
 
 import React from "react";
 import { StatsCombination } from "../types/stats";
+import { kellyFraction, logGrowthRate } from "../utils/math";
 
 interface Props {
   data: StatsCombination[];
@@ -16,7 +17,7 @@ export default function StatsTable({ data, excludeDraws = false, onSelectCombina
 
   return (
     <div className="overflow-x-auto border rounded">
-      <table className="w-full table-fixed text-sm" style={{ minWidth: `${maxMonsters * 120 + 200}px` }}>
+      <table className="w-full table-fixed text-sm" style={{ minWidth: `${maxMonsters * 120 + 300}px` }}>
         <thead>
           <tr className="border-b">
             {Array.from({ length: maxMonsters }).map((_, idx) => (
@@ -26,6 +27,7 @@ export default function StatsTable({ data, excludeDraws = false, onSelectCombina
               </React.Fragment>
             ))}
             {!excludeDraws && <th className="px-2 py-1 text-center">引き分け数(率)</th>}
+            <th className="px-2 py-1 text-center">最大対数成長率</th>
           </tr>
         </thead>
         <tbody>
@@ -65,6 +67,19 @@ export default function StatsTable({ data, excludeDraws = false, onSelectCombina
                     %)
                   </td>
                 )}
+                {(() => {
+                  let maxLg = -Infinity;
+                  comb.monsters.forEach((m) => {
+                    const winProb = m.win_rate;
+                    const netOdds = m.avg_net_odds - 1; // 純オッズ
+                    if (netOdds <= 0 || winProb <= 0) return;
+                    const frac = kellyFraction(winProb, netOdds);
+                    const lg = logGrowthRate(frac, winProb, netOdds);
+                    if (lg > maxLg) maxLg = lg;
+                  });
+                  if (maxLg === -Infinity) maxLg = 0;
+                  return <td className="px-2 py-1 text-center">{maxLg.toFixed(4)}</td>;
+                })()}
               </tr>
             );
           })}
